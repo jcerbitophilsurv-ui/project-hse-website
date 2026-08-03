@@ -36,14 +36,14 @@
 - `git init` done locally (required for the CMS's git-gateway backend to function at all).
 - Pushed to GitHub: https://github.com/jcerbitophilsurv-ui/project-hse-website — `main` branch is live and tracked.
 
-**Outstanding manual steps (need the user's own accounts — not something I can do)**:
+**Outstanding manual steps** — all done as of 2026-08-03:
 1. ~~Create a GitHub (or GitLab) repo and push this project.~~ Done — see repo link above.
 2. ~~Create a Netlify site from that repo ("New site from Git").~~ Done — site created and connected to the GitHub repo.
-3. Enable **Netlify Identity** on the site and invite the admin's email as a user. Done (Identity enabled, invite sent) — but the invite didn't show a "set password" screen because `index.html` didn't have the Netlify Identity widget script loaded (invite links land on the site root, not `/admin/`). **Fixed 2026-08-03**: added the widget script + init snippet to `index.html`. Next: re-click the invite email link (or resend it from the Netlify dashboard's Identity tab if it's expired) — it should now open the set-password screen.
-4. Enable **Git Gateway** (Identity → Services) — confirm this is done.
-5. Netlify Forms needs no extra step beyond deploying — auto-detected from `contact.html`.
+3. ~~Enable Netlify Identity and invite the admin's email.~~ Done. Hit one snag: the invite didn't show a "set password" screen because `index.html` didn't have the Netlify Identity widget script loaded (invite links land on the site root, not `/admin/`). Fixed by adding the widget script + init snippet to `index.html`. Confirmed working after that fix.
+4. ~~Enable Git Gateway.~~ Done.
+5. Netlify Forms — no extra step needed, auto-detected from `contact.html`.
 
-Until these are done, `/admin/` will load the Decap CMS login screen but can't actually authenticate or save.
+**The admin panel (`/admin/`) is now fully live**: login works end-to-end (Netlify Identity → Git Gateway → GitHub → Netlify auto-redeploy), and the admin can upload project photos and articles for real.
 
 **Placeholder content pending real client input** (carried over + new):
 - Stats strip figures, testimonials, contact details — unchanged from phase 1
