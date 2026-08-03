@@ -38,9 +38,9 @@
 
 **Outstanding manual steps (need the user's own accounts — not something I can do)**:
 1. ~~Create a GitHub (or GitLab) repo and push this project.~~ Done — see repo link above.
-2. Create a Netlify site from that repo ("New site from Git").
-3. Enable **Netlify Identity** on the site and invite the admin's email as a user.
-4. Enable **Git Gateway** (Identity → Services).
+2. ~~Create a Netlify site from that repo ("New site from Git").~~ Done — site created and connected to the GitHub repo.
+3. Enable **Netlify Identity** on the site and invite the admin's email as a user. Done (Identity enabled, invite sent) — but the invite didn't show a "set password" screen because `index.html` didn't have the Netlify Identity widget script loaded (invite links land on the site root, not `/admin/`). **Fixed 2026-08-03**: added the widget script + init snippet to `index.html`. Next: re-click the invite email link (or resend it from the Netlify dashboard's Identity tab if it's expired) — it should now open the set-password screen.
+4. Enable **Git Gateway** (Identity → Services) — confirm this is done.
 5. Netlify Forms needs no extra step beyond deploying — auto-detected from `contact.html`.
 
 Until these are done, `/admin/` will load the Decap CMS login screen but can't actually authenticate or save.
