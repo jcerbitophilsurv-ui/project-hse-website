@@ -736,14 +736,22 @@ img { max-width: 100%; display: block; }
 .quote-submit { align-self: stretch; text-align: center; justify-content: center; }
 .quote-loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   color: var(--color-green);
   font-weight: 600;
   font-size: 0.9rem;
+  text-align: center;
 }
 .quote-loading[hidden] { display: none; }
+.quote-loading-video {
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius);
+}
+.quote-loading-video[hidden] { display: none; }
 .spinner {
   width: 20px; height: 20px;
   border: 3px solid var(--color-gray-light);

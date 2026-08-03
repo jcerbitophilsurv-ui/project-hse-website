@@ -17,6 +17,9 @@
   const resultSystemSize = document.getElementById('resultSystemSize');
   const resultSavings = document.getElementById('resultSavings');
   const quoteCta = document.getElementById('quoteCta');
+  const loadingVideo = document.getElementById('quoteLoadingVideo');
+  const loadingSpinner = document.getElementById('quoteLoadingSpinner');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let settings = null;
 
@@ -60,11 +63,43 @@
   function playLoadingTransition(callback) {
     loadingEl.hidden = false;
     submitBtn.disabled = true;
-    setTimeout(() => {
+
+    let finished = false;
+    function finish() {
+      if (finished) return;
+      finished = true;
       loadingEl.hidden = true;
       submitBtn.disabled = false;
       callback();
-    }, 1200);
+    }
+
+    const canPlayVideo = loadingVideo && !prefersReducedMotion;
+    if (!canPlayVideo) {
+      setTimeout(finish, prefersReducedMotion ? 300 : 1200);
+      return;
+    }
+
+    if (loadingSpinner) loadingSpinner.hidden = true;
+    loadingVideo.hidden = false;
+    loadingVideo.currentTime = 0;
+    loadingVideo.addEventListener('ended', finish, { once: true });
+    loadingVideo.addEventListener('error', () => {
+      loadingVideo.hidden = true;
+      if (loadingSpinner) loadingSpinner.hidden = false;
+      setTimeout(finish, 1200);
+    }, { once: true });
+
+    const playPromise = loadingVideo.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch(() => {
+        loadingVideo.hidden = true;
+        if (loadingSpinner) loadingSpinner.hidden = false;
+        setTimeout(finish, 1200);
+      });
+    }
+
+    // Hard fallback in case 'ended' never fires (longer than the video's own length).
+    setTimeout(finish, 15000);
   }
 
   function computeEstimate(inputs) {

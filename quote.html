@@ -100,7 +100,8 @@
           <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Calculate My Estimate</button>
 
           <div class="quote-loading" id="quoteLoading" hidden>
-            <span class="spinner"></span>
+            <video id="quoteLoadingVideo" class="quote-loading-video" src="assets/video/for-savings.mp4" muted playsinline hidden></video>
+            <span class="spinner quote-loading-fallback-spinner" id="quoteLoadingSpinner" hidden></span>
             <span>Calculating your estimate…</span>
           </div>
         </form>

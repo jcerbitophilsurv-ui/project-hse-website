@@ -58,7 +58,7 @@
 
 ## Phase 3 — Instant Solar Savings Calculator (2026-08-03)
 
-**Status**: Built and verified locally (Playwright), pending a real (non-watermarked) loading animation asset.
+**Status**: Built and verified locally (Playwright), including the real loading animation. Ready to push.
 
 **Done**:
 - New `quote.html`: a lead-gen calculator — client enters monthly bill (₱), optional kWh, desired bill reduction (%, slider), and whether net metering is required, and gets an instant ballpark estimate (system size, panel count, recommended inverter size, installed cost range, new monthly bill, payback period).
@@ -74,11 +74,13 @@
 
 (Note: while testing, `npx serve`'s default "clean URLs" redirect stripped the `?prefill=` query string entirely — a local-dev-server-only quirk, not present on Netlify, which serves `.html` files as-is. Confirmed the real behavior using a plain static server instead.)
 
+**Update (2026-08-03): real loading animation wired in.** The user provided a clean, watermark-free video (`Video/for savings.mp4` → working copy at `assets/video/for-savings.mp4`) showing exactly the requested sequence: house sketch → panels + inverter appear → glowing connection lines light up the whole home. Verified frame-by-frame (via a headless-browser video check, since the Playwright-bundled `ffmpeg` binary can't decode MP4 — it's a stripped build with only webm/mjpeg support) — no watermark on any frame.
+
+`playLoadingTransition()` now plays this video (10s) instead of the placeholder spinner, resolving via the video's native `ended` event rather than a fixed timeout, with layered fallbacks: if the video fails to load/play, falls back to the spinner + a timer; a hard 15s timeout regardless in case `ended` never fires; and `prefers-reduced-motion` users skip the video entirely (verified: ~1.8s straight to results, video never shown). All paths verified via Playwright with no console errors.
+
 **Outstanding**:
-- Waiting on a watermark-free video (or alternative Lottie animation) from the user to replace the placeholder spinner loading state.
 - Confirm the new `quote_settings` collection renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
 
 **Next steps**:
 - Commit + push
 - Log into `/admin/` and confirm the "Quote Calculator Settings" collection edits correctly
-- Swap in the real loading animation once the user provides a clean asset

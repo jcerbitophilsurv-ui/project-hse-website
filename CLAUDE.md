@@ -31,12 +31,13 @@ Defined as CSS custom properties in `assets/css/styles.css`. Don't hardcode hex 
 
 ### Logo & video
 
-- Source originals: `Branding/horizon logo.png`, `Video/horizon video.mp4` — treat as read-only client-provided assets, do not overwrite.
+- Source originals: `Branding/horizon logo.png`, `Video/horizon video.mp4`, `Video/for savings.mp4` — treat as read-only client-provided assets, do not overwrite.
 - Working copies used by the site:
   - `assets/images/horizon-logo.png` — full-size original (2000x2000 square; the visible mark is a thin horizontal band, not a tight crop). Used in the About section where a square frame is wanted.
   - `assets/images/horizon-logo-cropped.png` — tightly cropped to the logo's content bounding box. Use this anywhere the logo needs to render legibly at a small height (nav, footer). It's auto-inverted to white via CSS filter when shown over the hero video, per the brand book's reverse-white-logo guidance, and switches to full color once the nav goes solid on scroll.
   - `assets/images/horizon-favicon.png` — icon mark only (no wordmark), square, for the browser tab.
-  - `assets/video/horizon-video.mp4`
+  - `assets/video/horizon-video.mp4` — homepage hero background.
+  - `assets/video/for-savings.mp4` — plays once during `quote.html`'s loading transition (house → panels → inverter → connections), driven by `assets/js/quote-calculator.js`'s `playLoadingTransition()`. Verified watermark-free before use (Gemini/Veo export) — see `PROGRESS.md` Phase 3.
 
 ## Tech stack
 
