@@ -750,8 +750,8 @@ img { max-width: 100%; display: block; }
 .quote-loading[hidden] { display: none; }
 .quote-loading-video {
   width: 100%;
-  max-width: 420px;
   border-radius: var(--radius);
+  display: block;
 }
 .quote-loading-video[hidden] { display: none; }
 .spinner {
