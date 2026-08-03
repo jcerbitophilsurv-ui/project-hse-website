@@ -78,6 +78,8 @@
 
 `playLoadingTransition()` now plays this video (10s) instead of the placeholder spinner, resolving via the video's native `ended` event rather than a fixed timeout, with layered fallbacks: if the video fails to load/play, falls back to the spinner + a timer; a hard 15s timeout regardless in case `ended` never fires; and `prefers-reduced-motion` users skip the video entirely (verified: ~1.8s straight to results, video never shown). All paths verified via Playwright with no console errors.
 
+**Update (2026-08-03): calculator form now hides during/after calculation.** Per feedback, the whole question form (`#quoteFormFields`) hides the moment "Calculate My Estimate" is submitted, leaving only the loading animation visible in its own focused card — form stays hidden through the results view too, rather than sitting above them. Added an "Edit your answers" link in the results panel that re-shows the form (previous inputs retained) and hides results, so users aren't stuck without a way to try different numbers. Verified via Playwright: form hidden during load and after results, reappears correctly on "Edit your answers" with prior values intact, no console errors.
+
 **Outstanding**:
 - Confirm the new `quote_settings` collection renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
 

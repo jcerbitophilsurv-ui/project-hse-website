@@ -58,46 +58,48 @@
       <div class="quote-card reveal">
 
         <form id="quoteForm" class="quote-form" novalidate>
-          <div class="form-row">
-            <label for="billInput">Monthly Electric Bill (₱)</label>
-            <input type="number" id="billInput" name="bill" min="1" step="1" placeholder="e.g. 4500" required>
-            <p class="field-error" id="billError" hidden>Please enter your average monthly bill.</p>
-          </div>
-
-          <div class="form-row">
-            <label for="kwhInput">Monthly Consumption (kWh) <span class="field-optional">— optional</span></label>
-            <input type="number" id="kwhInput" name="kwh" min="0" step="1" placeholder="e.g. 300">
-            <p class="field-hint">Don't know this? Leave it blank — we'll estimate it from your bill.</p>
-          </div>
-
-          <div class="form-row">
-            <label for="reductionSlider">Desired Bill Reduction</label>
-            <div class="slider-row">
-              <input type="range" id="reductionSlider" name="reduction" min="10" max="100" step="5" value="50">
-              <span class="slider-value" id="reductionValue">50%</span>
+          <div class="quote-form-fields" id="quoteFormFields">
+            <div class="form-row">
+              <label for="billInput">Monthly Electric Bill (₱)</label>
+              <input type="number" id="billInput" name="bill" min="1" step="1" placeholder="e.g. 4500" required>
+              <p class="field-error" id="billError" hidden>Please enter your average monthly bill.</p>
             </div>
-          </div>
 
-          <div class="form-row">
-            <label>Net Metering Required?</label>
-            <div class="toggle-pair" id="netMeteringToggle" role="group" aria-label="Net metering required">
-              <button type="button" class="toggle-btn" data-value="yes">Yes</button>
-              <button type="button" class="toggle-btn is-active" data-value="no">No</button>
+            <div class="form-row">
+              <label for="kwhInput">Monthly Consumption (kWh) <span class="field-optional">— optional</span></label>
+              <input type="number" id="kwhInput" name="kwh" min="0" step="1" placeholder="e.g. 300">
+              <p class="field-hint">Don't know this? Leave it blank — we'll estimate it from your bill.</p>
             </div>
-            <input type="hidden" id="netMeteringInput" value="no">
 
-            <div class="accordion-item info-toggle">
-              <button type="button" class="accordion-trigger accordion-trigger-sm" aria-expanded="false">
-                <span>What's net metering?</span>
-                <span class="accordion-icon">+</span>
-              </button>
-              <div class="accordion-panel">
-                <p>Net metering lets you export unused solar power back to the grid for bill credits. It requires a formal application with your electric utility — including a facility inspection and a bi-directional meter install — and typically takes 2–4 months to complete.</p>
+            <div class="form-row">
+              <label for="reductionSlider">Desired Bill Reduction</label>
+              <div class="slider-row">
+                <input type="range" id="reductionSlider" name="reduction" min="10" max="100" step="5" value="50">
+                <span class="slider-value" id="reductionValue">50%</span>
               </div>
             </div>
-          </div>
 
-          <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Calculate My Estimate</button>
+            <div class="form-row">
+              <label>Net Metering Required?</label>
+              <div class="toggle-pair" id="netMeteringToggle" role="group" aria-label="Net metering required">
+                <button type="button" class="toggle-btn" data-value="yes">Yes</button>
+                <button type="button" class="toggle-btn is-active" data-value="no">No</button>
+              </div>
+              <input type="hidden" id="netMeteringInput" value="no">
+
+              <div class="accordion-item info-toggle">
+                <button type="button" class="accordion-trigger accordion-trigger-sm" aria-expanded="false">
+                  <span>What's net metering?</span>
+                  <span class="accordion-icon">+</span>
+                </button>
+                <div class="accordion-panel">
+                  <p>Net metering lets you export unused solar power back to the grid for bill credits. It requires a formal application with your electric utility — including a facility inspection and a bi-directional meter install — and typically takes 2–4 months to complete.</p>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Calculate My Estimate</button>
+          </div>
 
           <div class="quote-loading" id="quoteLoading" hidden>
             <video id="quoteLoadingVideo" class="quote-loading-video" src="assets/video/for-savings.mp4" muted playsinline hidden></video>
@@ -127,6 +129,7 @@
           <p class="quote-disclaimer">This is a ballpark estimate based on typical Philippine market pricing and average solar yield. Your final quote will depend on a free assessment of your roof, shading, and electrical setup.</p>
 
           <a href="contact.html" class="btn btn-gold" id="quoteCta">Request a Formal Quote</a>
+          <button type="button" class="quote-edit-link" id="quoteEditAnswers">Edit your answers</button>
         </div>
 
       </div>

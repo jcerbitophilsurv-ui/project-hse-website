@@ -2,6 +2,8 @@
   const form = document.getElementById('quoteForm');
   if (!form) return;
 
+  const formFieldsEl = document.getElementById('quoteFormFields');
+  const editAnswersBtn = document.getElementById('quoteEditAnswers');
   const billInput = document.getElementById('billInput');
   const billError = document.getElementById('billError');
   const kwhInput = document.getElementById('kwhInput');
@@ -9,7 +11,6 @@
   const reductionValue = document.getElementById('reductionValue');
   const netMeteringToggle = document.getElementById('netMeteringToggle');
   const netMeteringInput = document.getElementById('netMeteringInput');
-  const submitBtn = document.getElementById('quoteSubmit');
   const loadingEl = document.getElementById('quoteLoading');
   const resultsEl = document.getElementById('quoteResults');
   const breakdownEl = document.getElementById('quoteBreakdown');
@@ -61,15 +62,14 @@
   // Isolated so a real loading animation (video/Lottie) can be swapped in later
   // without touching the calculation/render logic below.
   function playLoadingTransition(callback) {
+    formFieldsEl.hidden = true;
     loadingEl.hidden = false;
-    submitBtn.disabled = true;
 
     let finished = false;
     function finish() {
       if (finished) return;
       finished = true;
       loadingEl.hidden = true;
-      submitBtn.disabled = false;
       callback();
     }
 
@@ -206,5 +206,12 @@
         renderResults(result, inputs);
       });
     }
+  });
+
+  editAnswersBtn.addEventListener('click', () => {
+    resultsEl.hidden = true;
+    resultsEl.classList.remove('is-visible');
+    formFieldsEl.hidden = false;
+    formFieldsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 })();

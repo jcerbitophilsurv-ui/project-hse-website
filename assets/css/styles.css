@@ -681,6 +681,8 @@ img { max-width: 100%; display: block; }
   padding: 48px;
 }
 .quote-form { display: flex; flex-direction: column; gap: 26px; }
+.quote-form-fields { display: flex; flex-direction: column; gap: 26px; }
+.quote-form-fields[hidden] { display: none; }
 .quote-form label { font-size: 0.85rem; font-weight: 700; color: var(--color-green); }
 .field-optional { font-weight: 500; color: var(--color-gray); text-transform: none; }
 .field-hint { font-size: 0.8rem; color: var(--color-gray); margin-top: 6px; }
@@ -807,6 +809,20 @@ img { max-width: 100%; display: block; }
 .quote-note p { font-size: 0.85rem; color: var(--color-green-dark); }
 .quote-disclaimer { font-size: 0.78rem; color: var(--color-gray); font-style: italic; margin-bottom: 24px; }
 .quote-results .btn { width: 100%; text-align: center; justify-content: center; }
+.quote-edit-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-gray);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.quote-edit-link:hover { color: var(--color-green); }
 
 /* ===== Scroll reveal ===== */
 .reveal {
