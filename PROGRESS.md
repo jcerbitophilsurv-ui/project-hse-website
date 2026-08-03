@@ -34,9 +34,10 @@
 - Content data model: `content/projects.yml`, `content/articles.yml` — fetched and rendered client-side by `assets/js/content.js` (no build step; see `CLAUDE.md` "Content model" for why single-YAML-file collections were used instead of the more common folder-per-entry Decap pattern).
 - Contact form (`contact.html`) wired for Netlify Forms (`data-netlify="true"`, honeypot field, redirects to `thank-you.html`) — works automatically once hosted on Netlify, no backend code.
 - `git init` done locally (required for the CMS's git-gateway backend to function at all).
+- Pushed to GitHub: https://github.com/jcerbitophilsurv-ui/project-hse-website — `main` branch is live and tracked.
 
 **Outstanding manual steps (need the user's own accounts — not something I can do)**:
-1. Create a GitHub (or GitLab) repo and push this project.
+1. ~~Create a GitHub (or GitLab) repo and push this project.~~ Done — see repo link above.
 2. Create a Netlify site from that repo ("New site from Git").
 3. Enable **Netlify Identity** on the site and invite the admin's email as a user.
 4. Enable **Git Gateway** (Identity → Services).
