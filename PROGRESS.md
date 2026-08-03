@@ -58,7 +58,7 @@
 
 ## Phase 3 — Instant Solar Savings Calculator (2026-08-03)
 
-**Status**: Built and verified locally (Playwright), including the real loading animation. Ready to push.
+**Status**: Built, verified locally (Playwright), and pushed to GitHub/live on Netlify.
 
 **Done**:
 - New `quote.html`: a lead-gen calculator — client enters monthly bill (₱), optional kWh, desired bill reduction (%, slider), and whether net metering is required, and gets an instant ballpark estimate (system size, panel count, recommended inverter size, installed cost range, new monthly bill, payback period).
@@ -80,9 +80,12 @@
 
 **Update (2026-08-03): calculator form now hides during/after calculation.** Per feedback, the whole question form (`#quoteFormFields`) hides the moment "Calculate My Estimate" is submitted, leaving only the loading animation visible in its own focused card — form stays hidden through the results view too, rather than sitting above them. Added an "Edit your answers" link in the results panel that re-shows the form (previous inputs retained) and hides results, so users aren't stuck without a way to try different numbers. Verified via Playwright: form hidden during load and after results, reappears correctly on "Edit your answers" with prior values intact, no console errors.
 
+**Update (2026-08-03): loading video widened to fill the card.** It was capped at `max-width: 420px`, leaving visible gray card background on both sides during the loading animation. Now spans the card's full content width edge-to-edge (within the card's normal padding).
+
 **Outstanding**:
 - Confirm the new `quote_settings` collection renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
 
-**Next steps**:
-- Commit + push
+**Next steps** (pick up here):
 - Log into `/admin/` and confirm the "Quote Calculator Settings" collection edits correctly
+- Swap in real content as the client supplies it (stats, testimonials, contact details, project photos, articles)
+- Decide whether FAQ Q&A should also become CMS-managed
