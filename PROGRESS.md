@@ -52,6 +52,33 @@
 - FAQ accordion on `faq.html` — 4 placeholder Q&As, not yet CMS-managed (only projects/articles were asked to be admin-editable)
 
 **Next steps**:
-- User completes the 4 manual setup steps above, then verify a real login + upload end-to-end
+- ~~User completes the 4 manual setup steps above, then verify a real login + upload end-to-end~~ Done — confirmed working 2026-08-03.
 - Swap in real content as the client supplies it
 - Consider whether FAQ Q&A should also become CMS-managed later
+
+## Phase 3 — Instant Solar Savings Calculator (2026-08-03)
+
+**Status**: Built and verified locally (Playwright), pending a real (non-watermarked) loading animation asset.
+
+**Done**:
+- New `quote.html`: a lead-gen calculator — client enters monthly bill (₱), optional kWh, desired bill reduction (%, slider), and whether net metering is required, and gets an instant ballpark estimate (system size, panel count, recommended inverter size, installed cost range, new monthly bill, payback period).
+- Every site-wide "Get a Free Quote" link/button (9 occurrences across `index.html`, `services.html`, `faq.html`, `contact.html`, `thank-you.html`) now points to `quote.html` instead of straight to `contact.html`. The results panel's "Request a Formal Quote" button hands off to `contact.html?prefill=...`, which pre-fills the message textarea with a summary of their inputs (small addition to `contact.html`'s inline script).
+- Calculation assumptions researched from the current (Aug 2026) Philippine solar market — Meralco electricity rate, real measured PH solar yield data, installed cost per kWp for on-grid vs. hybrid/battery systems, typical panel wattage — sources logged in the plan file. These are estimates, not live distributor pricing (not feasible for a static site), and will drift out of date.
+- Assumptions are CMS-editable: new `content/quote-settings.yml` + a third Decap CMS collection (`quote_settings`) in `admin/config.yml`, following the same single-YAML-file pattern as Projects/Articles.
+- `assets/js/quote-calculator.js`: fetches the settings YAML, runs the calculation client-side, animates the two hero result numbers using the same count-up pattern as the homepage stats.
+- Loading transition between submit and results is a simple ~1.2s spinner for now (isolated in one `playLoadingTransition()` function) — **not** the custom house/panels/inverter animation the user originally wanted, because their Gemini/Veo-generated video (`Video/for savings.mp4`) carries a visible AI-content watermark. Watermark removal was declined (it's there to disclose AI provenance, and Google also embeds an invisible SynthID watermark that removing the visible one wouldn't touch anyway). User is getting a clean export and will provide it later — swapping it in is a contained change to that one function, not a rebuild.
+
+**Verified** (Playwright, local): hand-checked the math for two scenarios (₱4,000 bill, 50% reduction, net metering yes vs. no) against the formula — both matched exactly (1.6 kWp, 3×550W panels, ~3kW inverter, correct on-grid vs. hybrid cost ranges, correct payback years). Also verified: empty-bill validation, the net-metering info accordion, the `contact.html?prefill=` handoff (message textarea pre-fills correctly), and mobile layout. Two real bugs were caught and fixed during this pass:
+1. The two hero result numbers (system size, savings) initially showed "NaN" — they shared the `.stat-number` class with the homepage's animated counters, so `main.js`'s generic stat-counter observer also grabbed them and overwrote the correct values (it expects a `data-count` attribute these elements don't have). Fixed by giving them their own `.quote-stat-number` class, decoupling them from that unrelated behavior.
+2. The loading spinner was visible on page load instead of staying hidden until submit — `.quote-loading { display: flex; }` in CSS was overriding the `hidden` attribute's default `display: none`. Fixed with an explicit `.quote-loading[hidden] { display: none; }` rule.
+
+(Note: while testing, `npx serve`'s default "clean URLs" redirect stripped the `?prefill=` query string entirely — a local-dev-server-only quirk, not present on Netlify, which serves `.html` files as-is. Confirmed the real behavior using a plain static server instead.)
+
+**Outstanding**:
+- Waiting on a watermark-free video (or alternative Lottie animation) from the user to replace the placeholder spinner loading state.
+- Confirm the new `quote_settings` collection renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
+
+**Next steps**:
+- Commit + push
+- Log into `/admin/` and confirm the "Quote Calculator Settings" collection edits correctly
+- Swap in the real loading animation once the user provides a clean asset

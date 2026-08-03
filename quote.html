@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get a Free Quote — Instant Solar Estimate | Horizon Solar Energy</title>
+<meta name="description" content="Answer three quick questions and get an instant, ballpark solar system estimate for your home in the Philippines.">
+<link rel="icon" href="assets/images/horizon-favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,700,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<div class="progress-bar" id="scrollProgress"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <img src="assets/images/horizon-logo-cropped.png" alt="Horizon Solar Energy" class="brand-logo">
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="quote.html" class="btn btn-gold btn-sm">Get a Free Quote</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <p class="eyebrow reveal">Get a Free Quote</p>
+      <h1 class="reveal">See your solar savings in seconds</h1>
+      <p class="reveal">Answer three quick questions and get an instant, ballpark estimate — no obligation, no site visit needed yet.</p>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section class="quote-section">
+    <div class="container">
+      <div class="quote-card reveal">
+
+        <form id="quoteForm" class="quote-form" novalidate>
+          <div class="form-row">
+            <label for="billInput">Monthly Electric Bill (₱)</label>
+            <input type="number" id="billInput" name="bill" min="1" step="1" placeholder="e.g. 4500" required>
+            <p class="field-error" id="billError" hidden>Please enter your average monthly bill.</p>
+          </div>
+
+          <div class="form-row">
+            <label for="kwhInput">Monthly Consumption (kWh) <span class="field-optional">— optional</span></label>
+            <input type="number" id="kwhInput" name="kwh" min="0" step="1" placeholder="e.g. 300">
+            <p class="field-hint">Don't know this? Leave it blank — we'll estimate it from your bill.</p>
+          </div>
+
+          <div class="form-row">
+            <label for="reductionSlider">Desired Bill Reduction</label>
+            <div class="slider-row">
+              <input type="range" id="reductionSlider" name="reduction" min="10" max="100" step="5" value="50">
+              <span class="slider-value" id="reductionValue">50%</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Net Metering Required?</label>
+            <div class="toggle-pair" id="netMeteringToggle" role="group" aria-label="Net metering required">
+              <button type="button" class="toggle-btn" data-value="yes">Yes</button>
+              <button type="button" class="toggle-btn is-active" data-value="no">No</button>
+            </div>
+            <input type="hidden" id="netMeteringInput" value="no">
+
+            <div class="accordion-item info-toggle">
+              <button type="button" class="accordion-trigger accordion-trigger-sm" aria-expanded="false">
+                <span>What's net metering?</span>
+                <span class="accordion-icon">+</span>
+              </button>
+              <div class="accordion-panel">
+                <p>Net metering lets you export unused solar power back to the grid for bill credits. It requires a formal application with your electric utility — including a facility inspection and a bi-directional meter install — and typically takes 2–4 months to complete.</p>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Calculate My Estimate</button>
+
+          <div class="quote-loading" id="quoteLoading" hidden>
+            <span class="spinner"></span>
+            <span>Calculating your estimate…</span>
+          </div>
+        </form>
+
+        <div class="quote-results" id="quoteResults" hidden>
+          <div class="quote-hero-stats">
+            <div class="quote-hero-stat">
+              <span class="quote-stat-number" id="resultSystemSize">0</span>
+              <span class="stat-label">Recommended System Size</span>
+            </div>
+            <div class="quote-hero-stat">
+              <span class="quote-stat-number" id="resultSavings">₱0</span>
+              <span class="stat-label">Estimated Monthly Savings</span>
+            </div>
+          </div>
+
+          <ul class="quote-breakdown" id="quoteBreakdown"></ul>
+
+          <div class="quote-note" id="netMeteringNote" hidden>
+            <p>Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking <strong>2–4 months</strong> to complete.</p>
+          </div>
+
+          <p class="quote-disclaimer">This is a ballpark estimate based on typical Philippine market pricing and average solar yield. Your final quote will depend on a free assessment of your roof, shading, and electrical setup.</p>
+
+          <a href="contact.html" class="btn btn-gold" id="quoteCta">Request a Formal Quote</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="assets/images/horizon-logo-cropped.png" alt="Horizon Solar Energy" class="footer-logo">
+      <p>Power with Purpose.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-contact">
+        <li>+63 917 000 0000</li>
+        <li>hello@horizonsolarenergy.com</li>
+        <li>Metro Manila, Philippines</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="social-links">
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="LinkedIn">IN</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; 2026 Horizon Solar Energy. All rights reserved. Prototype build — contact details placeholder.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/quote-calculator.js"></script>
+</body>
+</html>

@@ -42,20 +42,21 @@ Defined as CSS custom properties in `assets/css/styles.css`. Don't hardcode hex 
 
 Still **plain HTML/CSS/JS — no framework, no build step, no npm dependencies at runtime**. This is intentional and load-bearing: don't introduce a bundler/static-site generator without discussing it first (see "Content model" below for why this matters more than usual here).
 
-The site is now **multi-page**: `index.html`, `services.html`, `faq.html`, `contact.html`, `thank-you.html`. Each page has its own copy of the header/footer markup (no includes/templating) — when changing nav or footer, update it in every page.
+The site is **multi-page**: `index.html`, `services.html`, `faq.html`, `contact.html`, `quote.html`, `thank-you.html`. Each page has its own copy of the header/footer markup (no includes/templating) — when changing nav or footer, update it in every page. Every "Get a Free Quote" link/button site-wide points to `quote.html` (not `contact.html` directly) — it's the lead-gen funnel entry point; `quote.html`'s own results panel then links to `contact.html` for a formal request.
 
 ## Content model (git-based CMS)
 
-Project photos and articles are admin-editable via **Decap CMS** (`admin/index.html` + `admin/config.yml`), backed by `git-gateway` (Netlify Identity + Git Gateway — no custom server code). This only works once the repo is pushed to GitHub/GitLab, deployed on Netlify, and Netlify Identity + Git Gateway are enabled there (not yet done — see `PROGRESS.md` for the outstanding manual steps).
+Project photos, articles, and the quote calculator's pricing assumptions are admin-editable via **Decap CMS** (`admin/index.html` + `admin/config.yml`), backed by `git-gateway` (Netlify Identity + Git Gateway — no custom server code). This is fully live: repo pushed to GitHub, deployed on Netlify, Identity + Git Gateway enabled and confirmed working (see `PROGRESS.md`).
 
-To keep this a true zero-build static site (Decap CMS normally pairs with a static-site generator, deliberately avoided here), content lives in exactly **two single YAML files**, edited as "list" fields so there's never a folder of many files to enumerate (plain static hosting can't do directory listings):
+To keep this a true zero-build static site (Decap CMS normally pairs with a static-site generator, deliberately avoided here), content lives in single YAML files, edited as "list" fields (or plain fields for single-record settings) so there's never a folder of many files to enumerate (plain static hosting can't do directory listings):
 
 - `content/projects.yml` — `projects: [{ title, location, category, image }]`, rendered into the gallery on `services.html`
 - `content/articles.yml` — `articles: [{ title, date, excerpt, body, image }]`, rendered into the accordion list on `faq.html`
+- `content/quote-settings.yml` — single-record settings (electricity rate, solar yield, cost-per-kWp ranges, panel wattage, available inverter sizes) driving the calculator on `quote.html`. These are researched Philippine market estimates (Aug 2026) that will drift out of date — update via `/admin/` (or the raw YAML) every few months.
 
-`assets/js/content.js` fetches these at runtime and renders them client-side using two CDN libraries (`js-yaml` to parse, `marked` to render article `body` Markdown) — no build step. Uploaded images land in `assets/images/uploads/` (Decap's `media_folder`), committed straight into the repo. FAQ Q&A pairs on `faq.html` are still hardcoded HTML (not CMS-managed) — only articles/projects were asked to be admin-editable.
+`assets/js/content.js` fetches `projects.yml`/`articles.yml` at runtime and renders them client-side (`js-yaml` to parse, `marked` for article Markdown). `assets/js/quote-calculator.js` fetches `quote-settings.yml` and runs the calculator's math client-side. No build step for any of it. Uploaded images land in `assets/images/uploads/` (Decap's `media_folder`), committed straight into the repo. FAQ Q&A pairs on `faq.html` are still hardcoded HTML (not CMS-managed).
 
-If you ever add a third editable content type, follow the same "single YAML file + list field" pattern rather than a folder collection.
+If you ever add another editable content type, follow the same "single YAML file, no folder collection" pattern.
 
 ## Structure
 
@@ -63,20 +64,23 @@ If you ever add a third editable content type, follow the same "single YAML file
 index.html               Homepage (hero, stats, about, teasers, values, testimonials, CTA)
 services.html             Services overview + Recent Projects gallery (from content/projects.yml)
 faq.html                  How It Works + FAQ accordion + Articles (from content/articles.yml)
+quote.html                Instant solar savings calculator ("Get a Free Quote" destination site-wide)
 contact.html               Contact form (Netlify Forms)
 thank-you.html             Contact form post-submit redirect target
 admin/index.html            Decap CMS shell (loads CMS via CDN, no custom UI)
-admin/config.yml            Decap CMS backend/collections config
+admin/config.yml            Decap CMS backend/collections config (projects, articles, quote_settings)
 content/projects.yml         CMS-editable project gallery data
 content/articles.yml         CMS-editable articles data
+content/quote-settings.yml   CMS-editable quote calculator assumptions (electricity rate, cost/kWp, etc.)
 assets/css/styles.css       All styling (brand tokens + layout + components), shared across pages
 assets/js/main.js           Interactions (nav scroll/toggle, scroll-reveal, stat counters, accordion toggle) — shared across pages, safe no-op on pages missing an element
 assets/js/content.js         Fetches + renders content/*.yml on services.html/faq.html (needs js-yaml + marked CDN scripts, only loaded on those pages)
+assets/js/quote-calculator.js Fetches content/quote-settings.yml, runs the calculator's math, renders results — only loaded on quote.html
 assets/images/               Working image assets (+ uploads/ for CMS-uploaded photos)
 assets/video/                Working video assets
 Branding/                    Client-provided source brand assets (do not edit)
 Video/                       Client-provided source video (do not edit)
-PROGRESS.md                  Phase-by-phase status log, including pending manual CMS setup steps
+PROGRESS.md                  Phase-by-phase status log
 ```
 
 ## Content policy
