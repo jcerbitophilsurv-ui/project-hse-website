@@ -1,0 +1,13 @@
+projects:
+  - title: Residential Installation
+    location: Quezon City
+    category: Residential
+    image: ""
+  - title: Rooftop Array
+    location: Batangas
+    category: Residential
+    image: ""
+  - title: Community Housing Project
+    location: Laguna
+    category: Community
+    image: ""

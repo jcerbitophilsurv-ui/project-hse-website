@@ -1,0 +1,45 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/images/uploads"
+public_folder: "/assets/images/uploads"
+
+collections:
+  - name: "projects"
+    label: "Projects"
+    files:
+      - file: "content/projects.yml"
+        label: "Recent Projects"
+        name: "projects"
+        fields:
+          - label: "Projects"
+            name: "projects"
+            widget: "list"
+            summary: "{{title}} — {{location}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Location", name: "location", widget: "string" }
+              - label: "Category"
+                name: "category"
+                widget: "select"
+                options: ["Residential", "Commercial", "Community"]
+              - { label: "Photo", name: "image", widget: "image", required: false }
+
+  - name: "articles"
+    label: "Articles"
+    files:
+      - file: "content/articles.yml"
+        label: "Articles"
+        name: "articles"
+        fields:
+          - label: "Articles"
+            name: "articles"
+            widget: "list"
+            summary: "{{title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+              - { label: "Excerpt", name: "excerpt", widget: "text" }
+              - { label: "Cover Image", name: "image", widget: "image", required: false }
+              - { label: "Body", name: "body", widget: "markdown" }

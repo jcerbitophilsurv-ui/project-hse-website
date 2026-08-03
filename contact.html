@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — Horizon Solar Energy</title>
+<meta name="description" content="Get a free, no-obligation solar consultation from Horizon Solar Energy.">
+<link rel="icon" href="assets/images/horizon-favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500,700,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<div class="progress-bar" id="scrollProgress"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <img src="assets/images/horizon-logo-cropped.png" alt="Horizon Solar Energy" class="brand-logo">
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="contact.html" class="btn btn-gold btn-sm">Get a Free Quote</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- PAGE HEADER -->
+  <section class="page-header">
+    <div class="container">
+      <p class="eyebrow reveal">Contact</p>
+      <h1 class="reveal">Let's talk about your solar project</h1>
+      <p class="reveal">Reach out for a free, no-obligation consultation — our team typically responds within one business day.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section">
+    <div class="container contact-grid">
+      <div class="contact-form-wrap reveal">
+        <h2>Send us a message</h2>
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" action="thank-you.html">
+          <input type="hidden" name="form-name" value="contact">
+          <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+
+          <div class="form-row">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-row form-row-split">
+            <div>
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required placeholder="Tell us about your home and energy needs..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-gold">Send Message</button>
+        </form>
+      </div>
+
+      <div class="contact-info reveal">
+        <h2>Other ways to reach us</h2>
+        <ul class="contact-info-list">
+          <li>
+            <span class="contact-info-label">Phone</span>
+            <span>+63 917 000 0000</span>
+          </li>
+          <li>
+            <span class="contact-info-label">Email</span>
+            <span>hello@horizonsolarenergy.com</span>
+          </li>
+          <li>
+            <span class="contact-info-label">Office</span>
+            <span>Metro Manila, Philippines</span>
+          </li>
+        </ul>
+        <p class="contact-note">Contact details shown are placeholder pending confirmation from the client.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="assets/images/horizon-logo-cropped.png" alt="Horizon Solar Energy" class="footer-logo">
+      <p>Power with Purpose.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="index.html#about">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul class="footer-contact">
+        <li>+63 917 000 0000</li>
+        <li>hello@horizonsolarenergy.com</li>
+        <li>Metro Manila, Philippines</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="social-links">
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="LinkedIn">IN</a>
+      </div>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; 2026 Horizon Solar Energy. All rights reserved. Prototype build — contact details placeholder.</p>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
