@@ -53,7 +53,7 @@ To keep this a true zero-build static site (Decap CMS normally pairs with a stat
 
 - `content/projects.yml` — `projects: [{ title, location, category, image }]`, rendered into the gallery on `services.html`
 - `content/articles.yml` — `articles: [{ title, date, excerpt, body, image }]`, rendered into the accordion list on `faq.html`
-- `content/quote-settings.yml` — single-record settings (electricity rate, solar yield, cost-per-kWp ranges, panel wattage, available inverter sizes) driving the calculator on `quote.html`. These are researched Philippine market estimates (Aug 2026) that will drift out of date — update via `/admin/` (or the raw YAML) every few months.
+- `content/quote-settings.yml` — single-record settings (grid electricity rate, solar cost per kWh, solar yield, cost-per-kWp ranges, panel wattage, available inverter sizes) driving the calculator on `quote.html`. These are researched Philippine market estimates (Aug 2026) that will drift out of date — update via `/admin/` (or the raw YAML) every few months. `solar_cost_php_per_kwh` in particular is a rough placeholder estimate, not client-confirmed pricing.
 
 `assets/js/content.js` fetches `projects.yml`/`articles.yml` at runtime and renders them client-side (`js-yaml` to parse, `marked` for article Markdown). `assets/js/quote-calculator.js` fetches `quote-settings.yml` and runs the calculator's math client-side. No build step for any of it. Uploaded images land in `assets/images/uploads/` (Decap's `media_folder`), committed straight into the repo. FAQ Q&A pairs on `faq.html` are still hardcoded HTML (not CMS-managed).
 

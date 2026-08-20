@@ -82,10 +82,16 @@
 
 **Update (2026-08-03): loading video widened to fill the card.** It was capped at `max-width: 420px`, leaving visible gray card background on both sides during the loading animation. Now spans the card's full content width edge-to-edge (within the card's normal padding).
 
+**Update (2026-08-20): calculator overhauled into a 3-scenario "energy statement" with lead capture.** The "Desired Bill Reduction" slider is gone — the calculator now always computes all three of 50%/70%/100% bill-reduction scenarios in parallel (`computeEstimate()` reused unchanged, just called 3x with fixed reduction values instead of once with whatever the slider said), each rendered as its own scenario card with system size, panel count, inverter, cost range, new monthly bill, and monthly/annual savings. Added a new 5-year projection per scenario (payback year count + net benefit by year 5, or remaining-cost-to-payback framing if not yet recouped within 5 years). Added required Full Name / Email / Phone fields to the form, each with its own styled error message (kept `novalidate` + reused the existing `#billError` pattern rather than falling back to unstyled native browser validation bubbles, to keep the error UI consistent with the rest of the branded form). Wired the form as a second Netlify Forms form (`name="quote"`, honeypot, following `contact.html`'s exact pattern) and the submit handler now also fires a fire-and-forget AJAX POST (`fetch('/', ...)`) so every calculator submission is captured as a lead immediately — a failed network request only logs to console and never blocks the on-page estimate. Added a new CMS-editable setting, `solar_cost_php_per_kwh`, shown side-by-side against the existing grid electricity rate (relabeled "Grid Electricity Cost" in the CMS for clarity) as a simple cost/kWh comparison in the new statement header. `contact.html`'s prefill script now also reads `?name=`/`?email=`/`?phone=` (in addition to the existing `?prefill=`) so a customer who already gave their contact info to the calculator doesn't retype it when they click through to "Request a Formal Quote".
+
+**Placeholder flagged**: `solar_cost_php_per_kwh` (default `6.5`) is a rough researched estimate, not client-confirmed pricing — same caveat treatment as the original Aug-2026 `quote-settings.yml` figures.
+
 **Outstanding**:
-- Confirm the new `quote_settings` collection renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
+- Confirm the new `quote_settings` collection (including the new "Solar Cost (₱ per kWh)" field) renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
+- Confirm the new `quote` Netlify Form is auto-detected and captures test submissions correctly once deployed (can't be verified locally — no Netlify Forms backend in local dev).
 
 **Next steps** (pick up here):
 - Log into `/admin/` and confirm the "Quote Calculator Settings" collection edits correctly
+- Check the Netlify dashboard (Site → Forms) after deploy for the new `quote` form and a test submission
 - Swap in real content as the client supplies it (stats, testimonials, contact details, project photos, articles)
 - Decide whether FAQ Q&A should also become CMS-managed

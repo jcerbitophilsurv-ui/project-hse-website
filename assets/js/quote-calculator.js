@@ -7,20 +7,28 @@
   const billInput = document.getElementById('billInput');
   const billError = document.getElementById('billError');
   const kwhInput = document.getElementById('kwhInput');
-  const reductionSlider = document.getElementById('reductionSlider');
-  const reductionValue = document.getElementById('reductionValue');
+  const nameInput = document.getElementById('nameInput');
+  const nameError = document.getElementById('nameError');
+  const emailInput = document.getElementById('emailInput');
+  const emailError = document.getElementById('emailError');
+  const phoneInput = document.getElementById('phoneInput');
+  const phoneError = document.getElementById('phoneError');
   const netMeteringToggle = document.getElementById('netMeteringToggle');
   const netMeteringInput = document.getElementById('netMeteringInput');
   const loadingEl = document.getElementById('quoteLoading');
   const resultsEl = document.getElementById('quoteResults');
-  const breakdownEl = document.getElementById('quoteBreakdown');
   const netMeteringNote = document.getElementById('netMeteringNote');
-  const resultSystemSize = document.getElementById('resultSystemSize');
-  const resultSavings = document.getElementById('resultSavings');
+  const statementNameEl = document.getElementById('quoteStatementName');
+  const statementKwhEl = document.getElementById('quoteStatementKwh');
+  const resultGridCost = document.getElementById('resultGridCost');
+  const resultSolarCost = document.getElementById('resultSolarCost');
+  const scenariosEl = document.getElementById('quoteScenarios');
   const quoteCta = document.getElementById('quoteCta');
   const loadingVideo = document.getElementById('quoteLoadingVideo');
   const loadingSpinner = document.getElementById('quoteLoadingSpinner');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const SCENARIOS = [50, 70, 100];
 
   let settings = null;
 
@@ -30,10 +38,6 @@
     return jsyaml.load(text);
   }
   loadSettings().then((data) => { settings = data; }).catch((err) => console.error(err));
-
-  reductionSlider.addEventListener('input', () => {
-    reductionValue.textContent = reductionSlider.value + '%';
-  });
 
   netMeteringToggle.querySelectorAll('.toggle-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -45,6 +49,10 @@
 
   function pesoFormat(num) {
     return '₱' + Math.round(num).toLocaleString('en-US');
+  }
+
+  function pesoRateFormat(num) {
+    return '₱' + num.toFixed(2);
   }
 
   function animateValue(el, start, end, duration, formatter) {
@@ -142,6 +150,8 @@
       recommendedInverterKw,
       costLow,
       costHigh,
+      avgCost,
+      currentMonthlyKwh,
       newMonthlyBill,
       currentMonthlyBill,
       monthlySavings,
@@ -150,25 +160,72 @@
     };
   }
 
-  function renderResults(result, inputs) {
-    animateValue(resultSystemSize, 0, result.actualSystemKwp, 1200, (v) => v.toFixed(1) + ' kWp');
-    animateValue(resultSavings, 0, result.monthlySavings, 1200, (v) => pesoFormat(v));
+  function computeProjection(result) {
+    const annualSavings = result.monthlySavings * 12;
+    const cumulative5yr = annualSavings * 5;
+    const remaining = Math.max(0, result.avgCost - cumulative5yr);
+    const netBenefit5yr = cumulative5yr - result.avgCost;
+    const isPaidBackWithin5yr = result.paybackYears !== null && result.paybackYears <= 5;
+    return { annualSavings, cumulative5yr, remaining, netBenefit5yr, isPaidBackWithin5yr };
+  }
 
-    const items = [
-      `<strong>${result.panelCount} &times; ${result.panelWattage}W</strong> solar panels`,
-      `Recommended <strong>~${result.recommendedInverterKw}kW ${result.inverterType}</strong>`,
-      `Estimated installed cost: <strong>${pesoFormat(result.costLow)} &ndash; ${pesoFormat(result.costHigh)}</strong>`,
-      `Estimated new monthly bill: <strong>${pesoFormat(result.newMonthlyBill)}</strong> (down from ${pesoFormat(result.currentMonthlyBill)})`,
-    ];
-    if (result.paybackYears) {
-      items.push(`Estimated payback period: <strong>~${result.paybackYears.toFixed(1)} years</strong>`);
-    }
-    breakdownEl.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
+  function runScenarios(inputs) {
+    return SCENARIOS.map((reduction) => {
+      const result = computeEstimate({ ...inputs, reduction });
+      const projection = computeProjection(result);
+      return { reduction, result, projection };
+    });
+  }
+
+  function renderScenarioCard({ reduction, result, projection }) {
+    const projectionLine = projection.isPaidBackWithin5yr
+      ? `Paid back in <strong>~${result.paybackYears.toFixed(1)} years</strong> — <strong>${pesoFormat(projection.netBenefit5yr)}</strong> net benefit by year 5`
+      : `Not yet paid back within 5 years — <strong>${pesoFormat(projection.remaining)}</strong> of installed cost remaining`;
+
+    return `
+      <div class="quote-scenario-card">
+        <div class="quote-scenario-head">
+          <span class="quote-scenario-badge">${reduction}% Bill Reduction</span>
+          <span class="quote-scenario-size" data-kwp="${result.actualSystemKwp}">0 kWp</span>
+        </div>
+        <ul class="quote-scenario-facts">
+          <li><strong>${result.panelCount} &times; ${result.panelWattage}W</strong> solar panels</li>
+          <li>Recommended <strong>~${result.recommendedInverterKw}kW ${result.inverterType}</strong></li>
+          <li>Estimated installed cost: <strong>${pesoFormat(result.costLow)} &ndash; ${pesoFormat(result.costHigh)}</strong></li>
+          <li>New monthly bill: <strong>${pesoFormat(result.newMonthlyBill)}</strong> <span class="quote-scenario-was">(from ${pesoFormat(result.currentMonthlyBill)})</span></li>
+          <li>Monthly savings: <strong>${pesoFormat(result.monthlySavings)}</strong> &middot; Annual savings: <strong>${pesoFormat(projection.annualSavings)}</strong></li>
+        </ul>
+        <div class="quote-scenario-projection">
+          <p class="quote-scenario-projection-label">5-Year Projection</p>
+          <p class="quote-scenario-projection-result">${projectionLine}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderResults(scenarios, inputs) {
+    statementNameEl.textContent = inputs.name ? `Estimate for ${inputs.name}` : 'Your Estimate';
+    animateValue(statementKwhEl, 0, scenarios[0].result.currentMonthlyKwh, 1200, (v) => Math.round(v).toLocaleString('en-US'));
+
+    resultGridCost.textContent = pesoRateFormat(settings.electricity_rate_php_per_kwh);
+    resultSolarCost.textContent = pesoRateFormat(settings.solar_cost_php_per_kwh);
+
+    scenariosEl.innerHTML = scenarios.map(renderScenarioCard).join('');
+    scenariosEl.querySelectorAll('.quote-scenario-size').forEach((el) => {
+      const kwp = parseFloat(el.dataset.kwp);
+      animateValue(el, 0, kwp, 1200, (v) => v.toFixed(1) + ' kWp');
+    });
 
     netMeteringNote.hidden = inputs.netMetering !== 'yes';
 
-    const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, ${inputs.reduction}% reduction target, net metering: ${inputs.netMetering}. Recommended ~${result.actualSystemKwp.toFixed(1)}kWp system (${result.panelCount}x ${result.panelWattage}W panels, ~${result.recommendedInverterKw}kW ${result.inverterType}), estimated cost ${pesoFormat(result.costLow)}-${pesoFormat(result.costHigh)}.`;
-    quoteCta.href = 'contact.html?prefill=' + encodeURIComponent(summary);
+    const scenarioSummary = scenarios.map(({ reduction, result }) =>
+      `${reduction}% reduction → ~${result.actualSystemKwp.toFixed(1)}kWp (${result.panelCount}x ${result.panelWattage}W, ~${result.recommendedInverterKw}kW ${result.inverterType}), est. cost ${pesoFormat(result.costLow)}-${pesoFormat(result.costHigh)}, new bill ~${pesoFormat(result.newMonthlyBill)}/mo.`
+    ).join(' ');
+    const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, net metering: ${inputs.netMetering}. ${scenarioSummary}`;
+    quoteCta.href = 'contact.html?prefill=' + encodeURIComponent(summary)
+      + '&name=' + encodeURIComponent(inputs.name)
+      + '&email=' + encodeURIComponent(inputs.email)
+      + '&phone=' + encodeURIComponent(inputs.phone);
 
     resultsEl.hidden = false;
     requestAnimationFrame(() => {
@@ -177,16 +234,64 @@
     });
   }
 
+  function submitLead(inputs) {
+    const body = new URLSearchParams({
+      'form-name': 'quote',
+      name: inputs.name,
+      email: inputs.email,
+      phone: inputs.phone,
+      bill: String(inputs.bill),
+      kwh: inputs.kwh ? String(inputs.kwh) : '',
+      'net-metering': inputs.netMetering,
+    }).toString();
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    }).catch((err) => {
+      console.error('Lead capture submission failed:', err);
+    });
+  }
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const bill = parseFloat(billInput.value);
+    let firstInvalid = null;
+
     if (!bill || bill <= 0) {
       billError.hidden = false;
-      billInput.focus();
+      firstInvalid = firstInvalid || billInput;
+    } else {
+      billError.hidden = true;
+    }
+
+    if (!nameInput.value.trim()) {
+      nameError.hidden = false;
+      firstInvalid = firstInvalid || nameInput;
+    } else {
+      nameError.hidden = true;
+    }
+
+    if (!emailInput.checkValidity()) {
+      emailError.hidden = false;
+      firstInvalid = firstInvalid || emailInput;
+    } else {
+      emailError.hidden = true;
+    }
+
+    if (!phoneInput.value.trim()) {
+      phoneError.hidden = false;
+      firstInvalid = firstInvalid || phoneInput;
+    } else {
+      phoneError.hidden = true;
+    }
+
+    if (firstInvalid) {
+      firstInvalid.focus();
       return;
     }
-    billError.hidden = true;
 
     if (!settings) {
       loadSettings().then((data) => { settings = data; submitEstimate(); }).catch((err) => console.error(err));
@@ -198,12 +303,17 @@
       const inputs = {
         bill,
         kwh: parseFloat(kwhInput.value) || 0,
-        reduction: parseFloat(reductionSlider.value),
         netMetering: netMeteringInput.value,
+        name: nameInput.value.trim(),
+        email: emailInput.value.trim(),
+        phone: phoneInput.value.trim(),
       };
+
+      submitLead(inputs);
+
       playLoadingTransition(() => {
-        const result = computeEstimate(inputs);
-        renderResults(result, inputs);
+        const scenarios = runScenarios(inputs);
+        renderResults(scenarios, inputs);
       });
     }
   });

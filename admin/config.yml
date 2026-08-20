@@ -51,7 +51,8 @@ collections:
         label: "Quote Calculator Assumptions"
         name: "quote_settings"
         fields:
-          - { label: "Electricity Rate (₱ per kWh)", name: "electricity_rate_php_per_kwh", widget: "number", value_type: "float" }
+          - { label: "Grid Electricity Cost (₱ per kWh)", name: "electricity_rate_php_per_kwh", widget: "number", value_type: "float" }
+          - { label: "Solar Cost (₱ per kWh)", name: "solar_cost_php_per_kwh", widget: "number", value_type: "float" }
           - { label: "Solar Yield (kWh per kWp per day)", name: "yield_kwh_per_kwp_per_day", widget: "number", value_type: "float" }
           - { label: "Panel Wattage (W)", name: "panel_wattage_w", widget: "number" }
           - { label: "On-Grid Installed Cost per kWp — Low (₱)", name: "cost_per_kwp_ongrid_low", widget: "number" }

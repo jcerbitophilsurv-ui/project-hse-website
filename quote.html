@@ -57,7 +57,9 @@
     <div class="container">
       <div class="quote-card reveal">
 
-        <form id="quoteForm" class="quote-form" novalidate>
+        <form id="quoteForm" class="quote-form" name="quote" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+          <input type="hidden" name="form-name" value="quote">
+          <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
           <div class="quote-form-fields" id="quoteFormFields">
             <div class="form-row">
               <label for="billInput">Monthly Electric Bill (₱)</label>
@@ -72,10 +74,21 @@
             </div>
 
             <div class="form-row">
-              <label for="reductionSlider">Desired Bill Reduction</label>
-              <div class="slider-row">
-                <input type="range" id="reductionSlider" name="reduction" min="10" max="100" step="5" value="50">
-                <span class="slider-value" id="reductionValue">50%</span>
+              <label for="nameInput">Full Name</label>
+              <input type="text" id="nameInput" name="name" placeholder="Juan Dela Cruz" required>
+              <p class="field-error" id="nameError" hidden>Please enter your full name.</p>
+            </div>
+
+            <div class="form-row form-row-split">
+              <div>
+                <label for="emailInput">Email Address</label>
+                <input type="email" id="emailInput" name="email" placeholder="you@email.com" required>
+                <p class="field-error" id="emailError" hidden>Please enter a valid email address.</p>
+              </div>
+              <div>
+                <label for="phoneInput">Phone Number</label>
+                <input type="tel" id="phoneInput" name="phone" placeholder="09XX XXX XXXX" required>
+                <p class="field-error" id="phoneError" hidden>Please enter your phone number.</p>
               </div>
             </div>
 
@@ -85,7 +98,7 @@
                 <button type="button" class="toggle-btn" data-value="yes">Yes</button>
                 <button type="button" class="toggle-btn is-active" data-value="no">No</button>
               </div>
-              <input type="hidden" id="netMeteringInput" value="no">
+              <input type="hidden" id="netMeteringInput" name="net-metering" value="no">
 
               <div class="accordion-item info-toggle">
                 <button type="button" class="accordion-trigger accordion-trigger-sm" aria-expanded="false">
@@ -109,18 +122,27 @@
         </form>
 
         <div class="quote-results" id="quoteResults" hidden>
-          <div class="quote-hero-stats">
-            <div class="quote-hero-stat">
-              <span class="quote-stat-number" id="resultSystemSize">0</span>
-              <span class="stat-label">Recommended System Size</span>
+          <div class="quote-statement-header">
+            <p class="quote-statement-eyebrow">Your Energy Statement</p>
+            <h2 id="quoteStatementName">Your Estimate</h2>
+            <p class="quote-statement-sub">Based on an estimated monthly usage of <span id="quoteStatementKwh">0</span> kWh</p>
+          </div>
+
+          <div class="quote-cost-compare">
+            <div class="quote-cost-compare-item">
+              <span class="quote-cost-label">Grid Electricity Cost</span>
+              <span class="quote-cost-number" id="resultGridCost">₱0.00</span>
+              <span class="quote-cost-unit">per kWh</span>
             </div>
-            <div class="quote-hero-stat">
-              <span class="quote-stat-number" id="resultSavings">₱0</span>
-              <span class="stat-label">Estimated Monthly Savings</span>
+            <div class="quote-cost-vs">vs</div>
+            <div class="quote-cost-compare-item is-solar">
+              <span class="quote-cost-label">Solar Cost</span>
+              <span class="quote-cost-number" id="resultSolarCost">₱0.00</span>
+              <span class="quote-cost-unit">per kWh</span>
             </div>
           </div>
 
-          <ul class="quote-breakdown" id="quoteBreakdown"></ul>
+          <div class="quote-scenarios" id="quoteScenarios"></div>
 
           <div class="quote-note" id="netMeteringNote" hidden>
             <p>Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking <strong>2–4 months</strong> to complete.</p>
