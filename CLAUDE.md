@@ -43,7 +43,7 @@ Defined as CSS custom properties in `assets/css/styles.css`. Don't hardcode hex 
 
 Still **plain HTML/CSS/JS — no framework, no build step, no npm dependencies at runtime**. This is intentional and load-bearing: don't introduce a bundler/static-site generator without discussing it first (see "Content model" below for why this matters more than usual here).
 
-The site is **multi-page**: `index.html`, `services.html`, `faq.html`, `contact.html`, `quote.html`, `thank-you.html`. Each page has its own copy of the header/footer markup (no includes/templating) — when changing nav or footer, update it in every page. Every "Get a Free Quote" link/button site-wide points to `quote.html` (not `contact.html` directly) — it's the lead-gen funnel entry point; `quote.html`'s own results panel then links to `contact.html` for a formal request.
+The site is **multi-page**: `index.html`, `about.html`, `services.html`, `faq.html`, `contact.html`, `quote.html`, `thank-you.html`. Each page has its own copy of the header/footer markup (no includes/templating) — when changing nav or footer, update it in every page. Every "Get a Free Quote" link/button site-wide points to `quote.html` (not `contact.html` directly) — it's the lead-gen funnel entry point; `quote.html`'s own results panel then links to `contact.html` for a formal request.
 
 ## Content model (git-based CMS)
 
@@ -62,7 +62,8 @@ If you ever add another editable content type, follow the same "single YAML file
 ## Structure
 
 ```
-index.html               Homepage (hero, stats, about, teasers, values, testimonials, CTA)
+index.html               Homepage (hero; stats/teaser/values/testimonials/CTA sections currently commented out, see PROGRESS.md)
+about.html                About Us / mission page (moved out of the homepage)
 services.html             Services overview + Recent Projects gallery (from content/projects.yml)
 faq.html                  How It Works + FAQ accordion + Articles (from content/articles.yml)
 quote.html                Instant solar savings calculator ("Get a Free Quote" destination site-wide)
