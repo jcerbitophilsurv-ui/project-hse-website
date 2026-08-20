@@ -86,6 +86,8 @@
 
 **Placeholder flagged**: `solar_cost_php_per_kwh` (default `6.5`) is a rough researched estimate, not client-confirmed pricing — same caveat treatment as the original Aug-2026 `quote-settings.yml` figures.
 
+**Update (2026-08-20): projection extended to 10 years, with a chart.** Each scenario card's projection now covers a `PROJECTION_HORIZON_YEARS = 10` window (was 5) and includes a small inline SVG chart — a cumulative-savings line climbing against a dashed "Investment" threshold, with the payback point marked when it falls within the 10-year window. No new dependencies (hand-built SVG); chart x-axis ticks every 2 years to stay legible at 11 data points.
+
 **Outstanding**:
 - Confirm the new `quote_settings` collection (including the new "Solar Cost (₱ per kWh)" field) renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
 - Confirm the new `quote` Netlify Form is auto-detected and captures test submissions correctly once deployed (can't be verified locally — no Netlify Forms backend in local dev).
