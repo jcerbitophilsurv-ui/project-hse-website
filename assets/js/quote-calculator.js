@@ -166,7 +166,59 @@
     const remaining = Math.max(0, result.avgCost - cumulative5yr);
     const netBenefit5yr = cumulative5yr - result.avgCost;
     const isPaidBackWithin5yr = result.paybackYears !== null && result.paybackYears <= 5;
-    return { annualSavings, cumulative5yr, remaining, netBenefit5yr, isPaidBackWithin5yr };
+    const savingsByYear = [0, 1, 2, 3, 4, 5].map((year) => result.monthlySavings * 12 * year);
+    return { annualSavings, cumulative5yr, remaining, netBenefit5yr, isPaidBackWithin5yr, savingsByYear };
+  }
+
+  // Small inline chart: cumulative savings (accent line) against the investment
+  // cost (a dashed gray threshold, direct-labeled — not a second "series").
+  function buildProjectionChart(result, projection) {
+    const W = 320, H = 150;
+    const padL = 8, padR = 8, padT = 16, padB = 26;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+    const maxY = Math.max(result.avgCost, projection.savingsByYear[5], 1) * 1.15;
+
+    const x = (year) => padL + (year / 5) * plotW;
+    const y = (value) => padT + plotH - (value / maxY) * plotH;
+
+    const thresholdY = y(result.avgCost);
+    const linePoints = projection.savingsByYear.map((v, year) => `${x(year).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+
+    const endYear = 5;
+    const endValue = projection.savingsByYear[endYear];
+    const endX = x(endYear);
+    const endY = y(endValue);
+    const endLabelY = endY < thresholdY ? endY - 10 : endY + 16;
+
+    let paybackMarkup = '';
+    if (projection.isPaidBackWithin5yr) {
+      const py = result.paybackYears;
+      const px = x(py);
+      const paybackAnchor = px < 50 ? 'start' : px > (W - 50) ? 'end' : 'middle';
+      paybackMarkup = `
+        <circle class="quote-chart-payback-dot" cx="${px.toFixed(1)}" cy="${thresholdY.toFixed(1)}" r="5"><title>Paid back in ${py.toFixed(1)} years</title></circle>
+        <text class="quote-chart-payback-label" x="${px.toFixed(1)}" y="${(thresholdY - 12).toFixed(1)}" text-anchor="${paybackAnchor}">Paid back ~${py.toFixed(1)}yr</text>
+      `;
+    }
+
+    const axisLabels = [0, 1, 2, 3, 4, 5].map((yr) => {
+      const anchor = yr === 0 ? 'start' : yr === 5 ? 'end' : 'middle';
+      return `<text class="quote-chart-axis-label" x="${x(yr).toFixed(1)}" y="${H - 6}" text-anchor="${anchor}">Yr ${yr}</text>`;
+    }).join('');
+
+    return `
+      <svg class="quote-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="5-year cumulative savings versus investment cost">
+        <line class="quote-chart-threshold" x1="${x(0).toFixed(1)}" y1="${thresholdY.toFixed(1)}" x2="${x(5).toFixed(1)}" y2="${thresholdY.toFixed(1)}" />
+        <text class="quote-chart-threshold-label" x="${x(0).toFixed(1)}" y="${(thresholdY - 6).toFixed(1)}">Investment: ${pesoFormat(result.avgCost)}</text>
+        <polyline class="quote-chart-savings-line" points="${linePoints}" />
+        <circle class="quote-chart-dot" cx="${x(0).toFixed(1)}" cy="${y(0).toFixed(1)}" r="4" />
+        <circle class="quote-chart-dot" cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4"><title>Year 5 cumulative savings: ${pesoFormat(endValue)}</title></circle>
+        <text class="quote-chart-end-label" x="${endX.toFixed(1)}" y="${endLabelY.toFixed(1)}" text-anchor="end">${pesoFormat(endValue)}</text>
+        ${paybackMarkup}
+        ${axisLabels}
+      </svg>
+    `;
   }
 
   function runScenarios(inputs) {
@@ -197,6 +249,7 @@
         </ul>
         <div class="quote-scenario-projection">
           <p class="quote-scenario-projection-label">5-Year Projection</p>
+          ${buildProjectionChart(result, projection)}
           <p class="quote-scenario-projection-result">${projectionLine}</p>
         </div>
       </div>
