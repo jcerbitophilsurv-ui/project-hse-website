@@ -59,6 +59,7 @@
         <h2>Send us a message</h2>
         <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" action="thank-you.html">
           <input type="hidden" name="form-name" value="contact">
+          <input type="hidden" name="source" id="sourceInput" value="direct">
           <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
 
           <div class="form-row">
@@ -157,11 +158,13 @@
     const nameField = document.getElementById('name');
     const emailField = document.getElementById('email');
     const phoneField = document.getElementById('phone');
+    const sourceField = document.getElementById('sourceInput');
 
     if (prefill && messageField) messageField.value = prefill;
     if (name && nameField) nameField.value = name;
     if (email && emailField) emailField.value = email;
     if (phone && phoneField) phoneField.value = phone;
+    if (prefill && sourceField) sourceField.value = 'quote-followup';
   })();
 </script>
 </body>
