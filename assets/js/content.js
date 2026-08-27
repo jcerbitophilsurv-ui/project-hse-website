@@ -15,10 +15,12 @@
   function projectTileHTML(project) {
     const hasPhoto = Boolean(project.image && String(project.image).trim() !== '');
     const cls = hasPhoto ? 'gallery-tile has-photo' : 'gallery-tile';
-    const style = hasPhoto ? ` style="background-image:url('${project.image}')"` : '';
-    const icon = hasPhoto ? '' : `<span class="gallery-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12v9M12 12L4 7.5M12 12l8-4.5"/></svg></span>`;
     const label = [project.title, project.location].filter(Boolean).join(' — ');
-    return `<div class="${cls}"${style}>${icon}<p>${escapeHTML(label)}</p></div>`;
+    const altText = escapeHTML(label || 'Horizon Solar Energy installation project');
+    const media = hasPhoto
+      ? `<img class="gallery-tile-img" src="${escapeHTML(project.image)}" alt="${altText}" loading="lazy">`
+      : `<span class="gallery-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12v9M12 12L4 7.5M12 12l8-4.5"/></svg></span>`;
+    return `<div class="${cls}">${media}<p>${escapeHTML(label)}</p></div>`;
   }
 
   async function renderProjects() {

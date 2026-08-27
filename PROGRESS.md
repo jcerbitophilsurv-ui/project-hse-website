@@ -104,8 +104,9 @@
 
 **Deliberately not addressed yet**:
 - `LocalBusiness` schema has no street address — the footer's "Metro Manila, Philippines" line is currently commented out (unconfirmed), so a fake address was not fabricated; only `addressCountry: PH` is set. Add a real `PostalAddress` once the client confirms one.
-- The Services page's project gallery renders photos via a CSS `background-image` on each tile (`assets/js/content.js`), not an `<img>` tag — meaning gallery photos currently carry no alt text and aren't picked up by image search. Fixing this means switching that tile to a real `<img>` with alt text from the project's title/location, which changes how the tile is styled (object-fit vs. background-image) — worth a deliberate follow-up, not bundled into this pass.
 - No real 1200×630 social-preview image exists yet — Open Graph/Twitter tags fall back to the square logo.
+
+**Update (2026-08-27): gallery photos now use real `<img>` tags.** The Services page's project gallery previously rendered photos via a CSS `background-image` on each tile (`assets/js/content.js`'s `projectTileHTML`), which carried no alt text and was invisible to image search. Tiles with a photo now render an `<img class="gallery-tile-img">` with `alt` built from the project's title/location (falls back to a generic description if both are blank), `loading="lazy"`; tiles without a photo keep the existing icon fallback unchanged. CSS updated to layer the image (`object-fit: cover`, absolutely positioned) beneath the existing dark gradient overlay and caption via explicit `z-index` (img 0, gradient 1, caption 2) — same visual result as before, verified via a Node simulation of both the with-photo and without-photo render paths.
 
 **Next steps** (client-side, not code):
 - Set up Google Business Profile — likely the single biggest lever for local-intent searches like "solar Philippines."
