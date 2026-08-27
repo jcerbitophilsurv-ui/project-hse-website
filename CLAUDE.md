@@ -82,8 +82,12 @@ assets/images/               Working image assets (+ uploads/ for CMS-uploaded p
 assets/video/                Working video assets
 Branding/                    Client-provided source brand assets (do not edit)
 Video/                       Client-provided source video (do not edit)
+robots.txt                   Allows crawling, disallows /admin/, points to sitemap.xml
+sitemap.xml                  Lists the 6 public pages (excludes thank-you.html and /admin/)
 PROGRESS.md                  Phase-by-phase status log
 ```
+
+Every public page's `<head>` carries a canonical tag, Open Graph/Twitter Card tags, and a `LocalBusiness` JSON-LD block (name/phone/email/service-area/social links) — keep these in sync with the footer contact details and social links since they're duplicated per page the same way. `thank-you.html` and `admin/index.html` are `noindex`, deliberately excluded from `sitemap.xml`.
 
 ## Content policy
 

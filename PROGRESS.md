@@ -92,6 +92,27 @@
 - Confirm the new `quote_settings` collection (including the new "Solar Cost (₱ per kWh)" field) renders correctly in the live `/admin/` panel (can't fully verify the CMS UI locally).
 - Confirm the new `quote` Netlify Form is auto-detected and captures test submissions correctly once deployed (can't be verified locally — no Netlify Forms backend in local dev).
 
+## Phase 4 — SEO foundation (2026-08-27)
+
+**Status**: Built, on-page/technical layer only — off-page work (Google Business Profile, Search Console, backlinks, content) is the client's ongoing responsibility, not code.
+
+**Done**:
+- New `robots.txt` (allows crawling, disallows `/admin/`, points to `sitemap.xml`) and `sitemap.xml` (lists the 6 public pages; `thank-you.html` and `/admin/` deliberately excluded).
+- Every public page's `<head>` now has: a rewritten, keyword-tuned `<title>`/meta description, a canonical tag, Open Graph + Twitter Card tags (image currently falls back to the full-size logo — no real 1200×630 social-share photo exists yet), and a `LocalBusiness` JSON-LD block (name, phone `+63 976 311 3745`, `sales@horizonsolar.net`, `areaServed: Philippines`, social links) — duplicated per page the same way the header/footer already are (no templating on this site).
+- `thank-you.html` and `admin/index.html` marked `noindex` and left out of `sitemap.xml`.
+- Verified locally: all pages + `robots.txt`/`sitemap.xml` serve correctly, every page's JSON-LD block is valid JSON (checked with a Node script), `<head>` tags are balanced.
+
+**Deliberately not addressed yet**:
+- `LocalBusiness` schema has no street address — the footer's "Metro Manila, Philippines" line is currently commented out (unconfirmed), so a fake address was not fabricated; only `addressCountry: PH` is set. Add a real `PostalAddress` once the client confirms one.
+- The Services page's project gallery renders photos via a CSS `background-image` on each tile (`assets/js/content.js`), not an `<img>` tag — meaning gallery photos currently carry no alt text and aren't picked up by image search. Fixing this means switching that tile to a real `<img>` with alt text from the project's title/location, which changes how the tile is styled (object-fit vs. background-image) — worth a deliberate follow-up, not bundled into this pass.
+- No real 1200×630 social-preview image exists yet — Open Graph/Twitter tags fall back to the square logo.
+
+**Next steps** (client-side, not code):
+- Set up Google Business Profile — likely the single biggest lever for local-intent searches like "solar Philippines."
+- Verify the domain in Google Search Console and submit `sitemap.xml`.
+- Publish real articles via `/admin/` (Articles collection is still seeded with placeholders) — targeted content is the main lever for ranking on broad terms over time.
+- Get listed in local directories / industry associations for backlinks.
+
 **Next steps** (pick up here):
 - Log into `/admin/` and confirm the "Quote Calculator Settings" collection edits correctly
 - Check the Netlify dashboard (Site → Forms) after deploy for the new `quote` form and a test submission
