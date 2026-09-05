@@ -12,7 +12,6 @@
   const emailInput = document.getElementById('emailInput');
   const emailError = document.getElementById('emailError');
   const phoneInput = document.getElementById('phoneInput');
-  const phoneError = document.getElementById('phoneError');
   const netMeteringToggle = document.getElementById('netMeteringToggle');
   const netMeteringInput = document.getElementById('netMeteringInput');
   const loadingEl = document.getElementById('quoteLoading');
@@ -235,22 +234,32 @@
     });
   }
 
+  const SCENARIO_LABELS = {
+    50: 'Covers about half your bill',
+    70: 'Covers most of it',
+    100: 'Covers all your usage',
+  };
+
   function renderScenarioCard({ reduction, result, projection }) {
     const projectionLine = projection.isPaidBackWithinHorizon
       ? `Paid back in <strong>~${result.paybackYears.toFixed(1)} years</strong> — <strong>${pesoFormat(projection.netBenefitAtHorizon)}</strong> net benefit by year ${PROJECTION_HORIZON_YEARS}`
       : `Not yet paid back within ${PROJECTION_HORIZON_YEARS} years — <strong>${pesoFormat(projection.remaining)}</strong> of installed cost remaining`;
 
+    const energyChargeLine = result.newMonthlyBill <= 0
+      ? '<strong>Energy charge covered in full</strong>'
+      : `Estimated energy charge: <strong>${pesoFormat(result.newMonthlyBill)}</strong> <span class="quote-scenario-was">(from ${pesoFormat(result.currentMonthlyBill)})</span>`;
+
     return `
       <div class="quote-scenario-card">
         <div class="quote-scenario-head">
-          <span class="quote-scenario-badge">${reduction}% Bill Reduction</span>
+          <span class="quote-scenario-badge">${SCENARIO_LABELS[reduction] || reduction + '% Bill Reduction'}</span>
           <span class="quote-scenario-size" data-kwp="${result.actualSystemKwp}">0 kWp</span>
         </div>
         <ul class="quote-scenario-facts">
           <li><strong>${result.panelCount} &times; ${result.panelWattage}W</strong> solar panels</li>
           <li>Recommended <strong>~${result.recommendedInverterKw}kW ${result.inverterType}</strong></li>
           <li>Estimated installed cost: <strong>${pesoFormat(result.costLow)} &ndash; ${pesoFormat(result.costHigh)}</strong></li>
-          <li>New monthly bill: <strong>${pesoFormat(result.newMonthlyBill)}</strong> <span class="quote-scenario-was">(from ${pesoFormat(result.currentMonthlyBill)})</span></li>
+          <li>${energyChargeLine}</li>
           <li>Monthly savings: <strong>${pesoFormat(result.monthlySavings)}</strong> &middot; Annual savings: <strong>${pesoFormat(projection.annualSavings)}</strong></li>
         </ul>
         <div class="quote-scenario-projection">
@@ -338,13 +347,6 @@
       firstInvalid = firstInvalid || emailInput;
     } else {
       emailError.hidden = true;
-    }
-
-    if (!phoneInput.value.trim()) {
-      phoneError.hidden = false;
-      firstInvalid = firstInvalid || phoneInput;
-    } else {
-      phoneError.hidden = true;
     }
 
     if (firstInvalid) {

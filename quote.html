@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Get a Free Quote — Instant Solar Estimate | Horizon Solar Energy</title>
+<title>What Solar Costs on Your Roof | Horizon Solar Energy</title>
 <meta name="description" content="Answer three quick questions and get an instant, ballpark solar system estimate for your home in the Philippines.">
 <link rel="canonical" href="https://horizonsolar.net/quote.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Horizon Solar Energy">
-<meta property="og:title" content="Get a Free Quote — Instant Solar Estimate | Horizon Solar Energy">
+<meta property="og:title" content="What Solar Costs on Your Roof | Horizon Solar Energy">
 <meta property="og:description" content="Answer three quick questions and get an instant, ballpark solar system estimate for your home in the Philippines.">
 <meta property="og:url" content="https://horizonsolar.net/quote.html">
 <meta property="og:image" content="https://horizonsolar.net/assets/images/horizon-logo.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Get a Free Quote — Instant Solar Estimate | Horizon Solar Energy">
+<meta name="twitter:title" content="What Solar Costs on Your Roof | Horizon Solar Energy">
 <meta name="twitter:description" content="Answer three quick questions and get an instant, ballpark solar system estimate for your home in the Philippines.">
 <meta name="twitter:image" content="https://horizonsolar.net/assets/images/horizon-logo.png">
 <link rel="icon" href="assets/images/horizon-favicon.png">
@@ -62,14 +62,14 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
-        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="faq.html">How It Works</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <div class="header-actions">
-      <a href="quote.html" class="btn btn-gold btn-sm">Get a Free Quote</a>
+      <a href="quote.html" class="btn btn-gold btn-sm">See What It Costs</a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -82,9 +82,9 @@
   <!-- PAGE HEADER -->
   <section class="page-header">
     <div class="container">
-      <p class="eyebrow reveal">Get a Free Quote</p>
-      <h1 class="reveal">See your solar savings in seconds</h1>
-      <p class="reveal">Answer three quick questions and get an instant, ballpark estimate — no obligation, no site visit needed yet.</p>
+      <p class="eyebrow reveal">See What It Costs</p>
+      <h1 class="reveal">What would solar actually cost on your roof?</h1>
+      <p class="reveal">Enter last month's electricity bill and we will show you the system size that fits, what it costs, and roughly what you would save. It is an estimate — the real number comes after we have seen your roof.</p>
     </div>
   </section>
 
@@ -99,7 +99,7 @@
           <div class="quote-form-fields" id="quoteFormFields">
             <div class="form-row">
               <label for="billInput">Monthly Electric Bill (₱)</label>
-              <input type="number" id="billInput" name="bill" min="1" step="1" placeholder="e.g. 4500" required>
+              <input type="number" id="billInput" name="bill" min="1" step="1" placeholder="e.g. 12,000" required>
               <p class="field-error" id="billError" hidden>Please enter your average monthly bill.</p>
             </div>
 
@@ -122,17 +122,18 @@
                 <p class="field-error" id="emailError" hidden>Please enter a valid email address.</p>
               </div>
               <div>
-                <label for="phoneInput">Phone Number</label>
-                <input type="tel" id="phoneInput" name="phone" placeholder="09XX XXX XXXX" required>
-                <p class="field-error" id="phoneError" hidden>Please enter your phone number.</p>
+                <label for="phoneInput">Phone <span class="field-optional">(optional)</span></label>
+                <input type="tel" id="phoneInput" name="phone" placeholder="09XX XXX XXXX">
+                <p class="field-hint">Only if you'd rather we called than emailed.</p>
               </div>
             </div>
 
             <div class="form-row">
-              <label>Net Metering Required?</label>
-              <div class="toggle-pair" id="netMeteringToggle" role="group" aria-label="Net metering required">
+              <label>Do you want to sell your unused power back to the grid?</label>
+              <div class="toggle-pair" id="netMeteringToggle" role="group" aria-label="Sell unused power back to the grid">
                 <button type="button" class="toggle-btn" data-value="yes">Yes</button>
                 <button type="button" class="toggle-btn is-active" data-value="no">No</button>
+                <button type="button" class="toggle-btn" data-value="not-sure">Not sure yet</button>
               </div>
               <input type="hidden" id="netMeteringInput" name="net-metering" value="no">
 
@@ -142,12 +143,12 @@
                   <span class="accordion-icon">+</span>
                 </button>
                 <div class="accordion-panel">
-                  <p>Net metering lets you export unused solar power back to the grid for bill credits. It requires a formal application with your electric utility — including a facility inspection and a bi-directional meter install — and typically takes 2–4 months to complete.</p>
+                  <p>Net metering lets you export unused solar power back to the grid for bill credits. It requires a formal application with your electric utility — including a facility inspection and a bi-directional meter install — and typically takes 2–4 months to complete. Your system starts working as soon as it's commissioned. Net metering only affects the credit for surplus power you export — it isn't something you wait for before the system runs.</p>
                 </div>
               </div>
             </div>
 
-            <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Calculate My Estimate</button>
+            <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Show My Estimate</button>
           </div>
 
           <div class="quote-loading" id="quoteLoading" hidden>
@@ -179,6 +180,7 @@
           </div>
 
           <div class="quote-scenarios" id="quoteScenarios"></div>
+          <p class="quote-scenarios-note">Your bill will still carry the fixed charges that appear whatever you generate.</p>
 
           <div class="quote-note" id="netMeteringNote" hidden>
             <p>Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking <strong>2–4 months</strong> to complete.</p>
@@ -208,7 +210,7 @@
       <ul>
         <li><a href="about.html">About Us</a></li>
         <li><a href="services.html">Services</a></li>
-        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="faq.html">How It Works</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </div>

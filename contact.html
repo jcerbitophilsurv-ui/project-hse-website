@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact Us — Horizon Solar Energy | Solar Consultation Philippines</title>
-<meta name="description" content="Get a free, no-obligation solar consultation from Horizon Solar Energy. Serving Filipino families and communities nationwide.">
+<meta name="description" content="Talk to the person who will design your system. Attach a photo of last month's electricity bill and we'll reply within one business day with a system size.">
 <link rel="canonical" href="https://horizonsolar.net/contact.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Horizon Solar Energy">
 <meta property="og:title" content="Contact Us — Horizon Solar Energy">
-<meta property="og:description" content="Get a free, no-obligation solar consultation from Horizon Solar Energy. Serving Filipino families and communities nationwide.">
+<meta property="og:description" content="Talk to the person who will design your system. Attach a photo of last month's electricity bill and we'll reply within one business day with a system size.">
 <meta property="og:url" content="https://horizonsolar.net/contact.html">
 <meta property="og:image" content="https://horizonsolar.net/assets/images/horizon-logo.png">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Contact Us — Horizon Solar Energy">
-<meta name="twitter:description" content="Get a free, no-obligation solar consultation from Horizon Solar Energy. Serving Filipino families and communities nationwide.">
+<meta name="twitter:description" content="Talk to the person who will design your system. Attach a photo of last month's electricity bill and we'll reply within one business day with a system size.">
 <meta name="twitter:image" content="https://horizonsolar.net/assets/images/horizon-logo.png">
 <link rel="icon" href="assets/images/horizon-favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,14 +62,14 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About</a></li>
-        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="faq.html">How It Works</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="contact.html" aria-current="page">Contact</a></li>
       </ul>
     </nav>
 
     <div class="header-actions">
-      <a href="quote.html" class="btn btn-gold btn-sm">Get a Free Quote</a>
+      <a href="quote.html" class="btn btn-gold btn-sm">See What It Costs</a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -83,8 +83,8 @@
   <section class="page-header">
     <div class="container">
       <p class="eyebrow reveal">Contact</p>
-      <h1 class="reveal">Let's talk about your solar project</h1>
-      <p class="reveal">Reach out for a free, no-obligation consultation — our team typically responds within one business day.</p>
+      <h1 class="reveal">Talk to the person who will design your system.</h1>
+      <p class="reveal">We reply within one business day. Attach a photo of last month's electricity bill and the first reply will already have a system size in it.</p>
     </div>
   </section>
 
@@ -93,7 +93,7 @@
     <div class="container contact-grid">
       <div class="contact-form-wrap reveal">
         <h2>Send us a message</h2>
-        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" action="thank-you.html">
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form" action="thank-you.html" enctype="multipart/form-data">
           <input type="hidden" name="form-name" value="contact">
           <input type="hidden" name="source" id="sourceInput" value="direct">
           <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
@@ -113,15 +113,20 @@
             </div>
           </div>
           <div class="form-row">
+            <label for="billPhoto">Attach your electricity bill <span class="field-optional">(optional)</span></label>
+            <input type="file" id="billPhoto" name="bill-photo" accept="image/*,.pdf">
+          </div>
+          <div class="form-row">
             <label for="message">Message</label>
             <textarea id="message" name="message" rows="5" required placeholder="Tell us about your home and energy needs..."></textarea>
+            <p class="field-hint">The fastest way to get a real answer is a photo of last month's bill.</p>
           </div>
           <button type="submit" class="btn btn-gold">Send Message</button>
         </form>
       </div>
 
       <div class="contact-info reveal">
-        <h2>Other ways to reach us</h2>
+        <h2>Or reach us directly</h2>
         <ul class="contact-info-list">
           <li>
             <span class="contact-info-label">Phone</span>
@@ -136,7 +141,6 @@
             <span>Metro Manila, Philippines</span>
           </li> -->
         </ul>
-        <p class="contact-note">Contact details shown are placeholder pending confirmation from the client.</p>
       </div>
     </div>
   </section>
@@ -155,7 +159,7 @@
       <ul>
         <li><a href="about.html">About Us</a></li>
         <li><a href="services.html">Services</a></li>
-        <li><a href="faq.html">FAQs</a></li>
+        <li><a href="faq.html">How It Works</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </div>
