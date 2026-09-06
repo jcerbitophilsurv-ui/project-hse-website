@@ -1,0 +1,131 @@
+# Transcribed from Pricing/Solar-Pricing-Reference-by-Consumption.xlsx (2026-09).
+# roi_years is derived in JS (price / savings_per_year), not stored here, so it can
+# never drift out of sync with the price/savings figures below.
+electricity_rate_php_per_kwh: 15.50
+export_credit_php_per_kwh: 7.00
+peak_sun_hours: 3.5
+tiers:
+  - kwh: 300
+    hybrid: { pv_kwp: 3.90, battery_kwh: 10.24, coverage: 1.00, price: 369818, savings_per_year: 55800 }
+    ongrid: { pv_kwp: 1.30, coverage: 0.40, price: 88727, savings_per_year: 22320 }
+    ongrid_nm: { pv_kwp: 3.25, coverage: 1.00, price: 200000, savings_per_year: 59265 }
+  - kwh: 400
+    hybrid: { pv_kwp: 4.55, battery_kwh: 10.24, coverage: 1.00, price: 385091, savings_per_year: 74400 }
+    ongrid: { pv_kwp: 1.95, coverage: 0.40, price: 104000, savings_per_year: 29760 }
+    ongrid_nm: { pv_kwp: 3.90, coverage: 1.00, price: 231636, savings_per_year: 75198 }
+  - kwh: 500
+    hybrid: { pv_kwp: 6.50, battery_kwh: 16.00, coverage: 1.00, price: 505455, savings_per_year: 93000 }
+    ongrid: { pv_kwp: 1.95, coverage: 0.40, price: 104000, savings_per_year: 37200 }
+    ongrid_nm: { pv_kwp: 5.20, coverage: 1.00, price: 262182, savings_per_year: 96864 }
+  - kwh: 600
+    hybrid: { pv_kwp: 6.50, battery_kwh: 16.00, coverage: 1.00, price: 505455, savings_per_year: 111600 }
+    ongrid: { pv_kwp: 2.60, coverage: 0.40, price: 119273, savings_per_year: 44640 }
+    ongrid_nm: { pv_kwp: 5.85, coverage: 1.00, price: 277455, savings_per_year: 112797 }
+  - kwh: 700
+    hybrid: { pv_kwp: 7.15, battery_kwh: 16.00, coverage: 1.00, price: 520727, savings_per_year: 130200 }
+    ongrid: { pv_kwp: 3.25, coverage: 0.40, price: 134545, savings_per_year: 52080 }
+    ongrid_nm: { pv_kwp: 7.15, coverage: 1.00, price: 313455, savings_per_year: 134463 }
+  - kwh: 750
+    hybrid: { pv_kwp: 8.45, battery_kwh: 21.12, coverage: 1.00, price: 654909, savings_per_year: 139500 }
+    ongrid: { pv_kwp: 3.25, coverage: 0.40, price: 134545, savings_per_year: 55800 }
+    ongrid_nm: { pv_kwp: 7.15, coverage: 1.00, price: 313455, savings_per_year: 139563 }
+  - kwh: 800
+    hybrid: { pv_kwp: 9.10, battery_kwh: 21.12, coverage: 1.00, price: 670182, savings_per_year: 148800 }
+    ongrid: { pv_kwp: 3.25, coverage: 0.40, price: 134545, savings_per_year: 59520 }
+    ongrid_nm: { pv_kwp: 7.80, coverage: 1.00, price: 328727, savings_per_year: 150396 }
+  - kwh: 850
+    hybrid: { pv_kwp: 9.10, battery_kwh: 21.12, coverage: 1.00, price: 670182, savings_per_year: 158100 }
+    ongrid: { pv_kwp: 3.25, coverage: 0.40, price: 134545, savings_per_year: 63240 }
+    ongrid_nm: { pv_kwp: 8.45, coverage: 1.00, price: 356727, savings_per_year: 161229 }
+  - kwh: 900
+    hybrid: { pv_kwp: 9.10, battery_kwh: 21.12, coverage: 1.00, price: 670182, savings_per_year: 167400 }
+    ongrid: { pv_kwp: 3.90, coverage: 0.40, price: 166182, savings_per_year: 66960 }
+    ongrid_nm: { pv_kwp: 9.10, coverage: 1.00, price: 372000, savings_per_year: 172062 }
+  - kwh: 950
+    hybrid: { pv_kwp: 9.10, battery_kwh: 21.12, coverage: 1.00, price: 670182, savings_per_year: 176700 }
+    ongrid: { pv_kwp: 3.90, coverage: 0.40, price: 166182, savings_per_year: 70680 }
+    ongrid_nm: { pv_kwp: 9.10, coverage: 1.00, price: 372000, savings_per_year: 177162 }
+  - kwh: 1000
+    hybrid: { pv_kwp: 11.05, battery_kwh: 26.24, coverage: 1.00, price: 803273, savings_per_year: 186000 }
+    ongrid: { pv_kwp: 3.90, coverage: 0.40, price: 166182, savings_per_year: 74400 }
+    ongrid_nm: { pv_kwp: 9.75, coverage: 1.00, price: 387273, savings_per_year: 187995 }
+  - kwh: 1050
+    hybrid: { pv_kwp: 11.05, battery_kwh: 26.24, coverage: 1.00, price: 803273, savings_per_year: 195300 }
+    ongrid: { pv_kwp: 4.55, coverage: 0.40, price: 181455, savings_per_year: 78120 }
+    ongrid_nm: { pv_kwp: 10.40, coverage: 1.00, price: 466182, savings_per_year: 198828 }
+  - kwh: 1100
+    hybrid: { pv_kwp: 11.05, battery_kwh: 26.24, coverage: 1.00, price: 803273, savings_per_year: 204600 }
+    ongrid: { pv_kwp: 4.55, coverage: 0.40, price: 181455, savings_per_year: 81840 }
+    ongrid_nm: { pv_kwp: 11.05, coverage: 1.00, price: 481455, savings_per_year: 209661 }
+  - kwh: 1150
+    hybrid: { pv_kwp: 11.70, battery_kwh: 26.24, coverage: 1.00, price: 818545, savings_per_year: 213900 }
+    ongrid: { pv_kwp: 4.55, coverage: 0.40, price: 181455, savings_per_year: 85560 }
+    ongrid_nm: { pv_kwp: 11.05, coverage: 1.00, price: 481455, savings_per_year: 214761 }
+  - kwh: 1200
+    hybrid: { pv_kwp: 13.00, battery_kwh: 32.00, coverage: 1.00, price: 1056364, savings_per_year: 223200 }
+    ongrid: { pv_kwp: 5.20, coverage: 0.40, price: 196727, savings_per_year: 89280 }
+    ongrid_nm: { pv_kwp: 11.70, coverage: 1.00, price: 496727, savings_per_year: 225594 }
+  - kwh: 1250
+    hybrid: { pv_kwp: 13.00, battery_kwh: 32.00, coverage: 1.00, price: 1056364, savings_per_year: 232500 }
+    ongrid: { pv_kwp: 5.20, coverage: 0.40, price: 196727, savings_per_year: 93000 }
+    ongrid_nm: { pv_kwp: 12.35, coverage: 1.00, price: 512000, savings_per_year: 236427 }
+  - kwh: 1300
+    hybrid: { pv_kwp: 13.65, battery_kwh: 32.00, coverage: 1.00, price: 1071636, savings_per_year: 241800 }
+    ongrid: { pv_kwp: 5.20, coverage: 0.40, price: 196727, savings_per_year: 96720 }
+    ongrid_nm: { pv_kwp: 13.00, coverage: 1.00, price: 527273, savings_per_year: 247260 }
+  - kwh: 1350
+    hybrid: { pv_kwp: 13.65, battery_kwh: 32.00, coverage: 1.00, price: 1071636, savings_per_year: 251100 }
+    ongrid: { pv_kwp: 5.20, coverage: 0.40, price: 196727, savings_per_year: 100440 }
+    ongrid_nm: { pv_kwp: 13.00, coverage: 1.00, price: 527273, savings_per_year: 252360 }
+  - kwh: 1400
+    hybrid: { pv_kwp: 13.65, battery_kwh: 32.00, coverage: 1.00, price: 1071636, savings_per_year: 260400 }
+    ongrid: { pv_kwp: 5.85, coverage: 0.40, price: 212000, savings_per_year: 104160 }
+    ongrid_nm: { pv_kwp: 13.65, coverage: 1.00, price: 542545, savings_per_year: 263193 }
+  - kwh: 1450
+    hybrid: { pv_kwp: 15.60, battery_kwh: 37.12, coverage: 1.00, price: 1190182, savings_per_year: 269700 }
+    ongrid: { pv_kwp: 5.85, coverage: 0.40, price: 212000, savings_per_year: 107880 }
+    ongrid_nm: { pv_kwp: 14.30, coverage: 1.00, price: 557818, savings_per_year: 274026 }
+  - kwh: 1500
+    hybrid: { pv_kwp: 15.60, battery_kwh: 37.12, coverage: 1.00, price: 1190182, savings_per_year: 279000 }
+    ongrid: { pv_kwp: 5.85, coverage: 0.40, price: 212000, savings_per_year: 111600 }
+    ongrid_nm: { pv_kwp: 14.30, coverage: 1.00, price: 557818, savings_per_year: 279126 }
+  - kwh: 1550
+    hybrid: { pv_kwp: 15.60, battery_kwh: 37.12, coverage: 1.00, price: 1190182, savings_per_year: 288300 }
+    ongrid: { pv_kwp: 6.50, coverage: 0.40, price: 232727, savings_per_year: 115320 }
+    ongrid_nm: { pv_kwp: 14.95, coverage: 1.00, price: 573091, savings_per_year: 289959 }
+  - kwh: 1600
+    hybrid: { pv_kwp: 16.25, battery_kwh: 37.12, coverage: 1.00, price: 1205455, savings_per_year: 297600 }
+    ongrid: { pv_kwp: 6.50, coverage: 0.40, price: 232727, savings_per_year: 119040 }
+    ongrid_nm: { pv_kwp: 15.60, coverage: 1.00, price: 588364, savings_per_year: 300792 }
+  - kwh: 1650
+    hybrid: { pv_kwp: 16.25, battery_kwh: 37.12, coverage: 1.00, price: 1205455, savings_per_year: 306900 }
+    ongrid: { pv_kwp: 6.50, coverage: 0.40, price: 232727, savings_per_year: 122760 }
+    ongrid_nm: { pv_kwp: 16.25, coverage: 1.00, price: 603636, savings_per_year: 311625 }
+  - kwh: 1700
+    hybrid: { pv_kwp: 17.55, battery_kwh: 42.24, coverage: 1.00, price: 1308727, savings_per_year: 316200 }
+    ongrid: { pv_kwp: 6.50, coverage: 0.40, price: 232727, savings_per_year: 126480 }
+    ongrid_nm: { pv_kwp: 16.25, coverage: 1.00, price: 603636, savings_per_year: 316725 }
+  - kwh: 1750
+    hybrid: { pv_kwp: 17.55, battery_kwh: 42.24, coverage: 1.00, price: 1308727, savings_per_year: 325500 }
+    ongrid: { pv_kwp: 7.15, coverage: 0.40, price: 248000, savings_per_year: 130200 }
+    ongrid_nm: { pv_kwp: 16.90, coverage: 1.00, price: 618909, savings_per_year: 327558 }
+  - kwh: 1800
+    hybrid: { pv_kwp: 18.20, battery_kwh: 42.24, coverage: 1.00, price: 1324000, savings_per_year: 334800 }
+    ongrid: { pv_kwp: 7.15, coverage: 0.40, price: 248000, savings_per_year: 133920 }
+    ongrid_nm: { pv_kwp: 17.55, coverage: 1.00, price: 634182, savings_per_year: 338391 }
+  - kwh: 1850
+    hybrid: { pv_kwp: 18.20, battery_kwh: 42.24, coverage: 1.00, price: 1324000, savings_per_year: 344100 }
+    ongrid: { pv_kwp: 7.15, coverage: 0.40, price: 248000, savings_per_year: 137640 }
+    ongrid_nm: { pv_kwp: 18.20, coverage: 1.00, price: 649455, savings_per_year: 349224 }
+  - kwh: 1900
+    hybrid: { pv_kwp: 18.20, battery_kwh: 42.24, coverage: 1.00, price: 1324000, savings_per_year: 353400 }
+    ongrid: { pv_kwp: 7.80, coverage: 0.40, price: 263273, savings_per_year: 141360 }
+    ongrid_nm: { pv_kwp: 18.20, coverage: 1.00, price: 649455, savings_per_year: 354324 }
+  - kwh: 1950
+    hybrid: { pv_kwp: 20.15, battery_kwh: 48.00, coverage: 1.00, price: 1413455, savings_per_year: 362700 }
+    ongrid: { pv_kwp: 7.80, coverage: 0.40, price: 263273, savings_per_year: 145080 }
+    ongrid_nm: { pv_kwp: 18.85, coverage: 1.00, price: 664727, savings_per_year: 365157 }
+  - kwh: 2000
+    hybrid: { pv_kwp: 20.15, battery_kwh: 48.00, coverage: 1.00, price: 1413455, savings_per_year: 372000 }
+    ongrid: { pv_kwp: 7.80, coverage: 0.40, price: 263273, savings_per_year: 148800 }
+    ongrid_nm: { pv_kwp: 19.50, coverage: 1.00, price: 680000, savings_per_year: 375990 }

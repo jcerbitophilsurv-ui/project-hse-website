@@ -1,15 +1,1 @@
-electricity_rate_php_per_kwh: 14.5
 solar_cost_php_per_kwh: 6.5
-yield_kwh_per_kwp_per_day: 3.6
-panel_wattage_w: 550
-cost_per_kwp_ongrid_low: 45000
-cost_per_kwp_ongrid_high: 65000
-cost_per_kwp_hybrid_low: 90000
-cost_per_kwp_hybrid_high: 150000
-inverter_sizes_kw:
-  - size: 3
-  - size: 5
-  - size: 8
-  - size: 10
-  - size: 12
-  - size: 16

@@ -45,7 +45,7 @@ Still **plain HTML/CSS/JS — no framework, no build step, no npm dependencies a
 
 The site is **multi-page**: `index.html`, `about.html`, `services.html`, `faq.html`, `contact.html`, `quote.html`, `thank-you.html`. Each page has its own copy of the header/footer markup (no includes/templating) — when changing nav or footer, update it in every page. Every "See What It Costs" link/button site-wide points to `quote.html` (not `contact.html` directly, and note: it's `faq.html`'s file/URL that stays the same even though its nav label and on-page identity are now "How It Works", not "FAQs") — it's the lead-gen funnel entry point; `quote.html`'s own results panel then links to `contact.html` for a formal request.
 
-Copy source of truth: `Branding/Horizon Solar - Website Build Sheet.docx` (43 numbered tasks, client-confirmed final copy) — see `PROGRESS.md` for what's been applied and what's deliberately deferred (the Privacy Policy page/consent copy pending legal sign-off, and the quote calculator's underlying arithmetic/home-vs-business fork, tracked as separate technical work).
+Copy source of truth: `Branding/Horizon Solar - Website Build Sheet.docx` (43 numbered tasks, client-confirmed final copy) — see `PROGRESS.md` for what's been applied and what's deliberately deferred (the Privacy Policy page/consent copy pending legal sign-off). Pricing source of truth: `Pricing/Solar-Pricing-Reference-by-Consumption.xlsx`, transcribed into `content/pricing-tables.yml` — see "Content model" below and `PROGRESS.md` Phase 6.
 
 ## Content model (git-based CMS)
 
@@ -55,9 +55,10 @@ To keep this a true zero-build static site (Decap CMS normally pairs with a stat
 
 - `content/projects.yml` — `projects: [{ title, location, category, image }]`. **Currently dormant**: `services.html` no longer has a `#projectsGrid` element to render into (its "Recent Projects" gallery was replaced by a static "How we work" section per the Build Sheet's D4 — real project photos may return as a later, separate task per that doc's own note). The CMS collection, YAML file, and `assets/js/content.js`'s `renderProjects()` are intentionally left in place (harmless no-op — `content.js` isn't even loaded by any page right now) rather than deleted, in case the gallery comes back.
 - `content/articles.yml` — `articles: [{ title, date, excerpt, body, image }]`. **Also dormant** for the same reason: the Articles section was deleted from `faq.html` (Build Sheet E2 — "Articles will return later with their own navigation item and individual pages"). Same treatment: collection/YAML/`renderArticles()` kept, not deleted.
-- `content/quote-settings.yml` — single-record settings (grid electricity rate, solar cost per kWh, solar yield, cost-per-kWp ranges, panel wattage, available inverter sizes) driving the calculator on `quote.html`. Still fully live. These are researched Philippine market estimates (Aug 2026) that will drift out of date — update via `/admin/` (or the raw YAML) every few months. `solar_cost_php_per_kwh` in particular is a rough placeholder estimate, not client-confirmed pricing.
+- `content/quote-settings.yml` — down to one field, `solar_cost_php_per_kwh` (still a rough placeholder, not client-confirmed — used only for the "Grid vs Solar Cost" comparison bar at the top of the results, since the pricing reference below has no equivalent ₱/kWh generation-cost figure). Still CMS-editable via `/admin/`.
+- `content/pricing-tables.yml` — **the real pricing data**, transcribed from `Pricing/Solar-Pricing-Reference-by-Consumption.xlsx` (client-provided, dated 2026-09). A top-level `electricity_rate_php_per_kwh` (₱15.50) and `export_credit_php_per_kwh` (₱7.00), plus `tiers: [{ kwh, hybrid: {...}, ongrid: {...}, ongrid_nm: {...} }]` — 31 consumption tiers from 300-2,000 kWh (irregular steps: 100 kWh up to 700, then 50 kWh), each with all three product options' `pv_kwp`/`price`/`savings_per_year` (`battery_kwh`/`coverage` too, hybrid only has the former). `roi_years` is deliberately NOT stored — `quote-calculator.js` derives it as `price / savings_per_year` so it can never drift out of sync with the other two figures if either is edited. **Not yet CMS-editable** (see Outstanding in PROGRESS.md Phase 6) — edit the raw YAML (or ask Claude) for now, verify any edit against the source spreadsheet.
 
-`assets/js/content.js` fetches `projects.yml`/`articles.yml` at runtime and renders them client-side (`js-yaml` to parse, `marked` for article Markdown) — currently unreferenced by any page's `<script>` tags (see dormant note above). `assets/js/quote-calculator.js` fetches `quote-settings.yml` and runs the calculator's math client-side, still active. No build step for any of it. Uploaded images land in `assets/images/uploads/` (Decap's `media_folder`), committed straight into the repo. FAQ Q&A pairs on `faq.html` are hardcoded HTML (not CMS-managed).
+`assets/js/content.js` fetches `projects.yml`/`articles.yml` at runtime and renders them client-side (`js-yaml` to parse, `marked` for article Markdown) — currently unreferenced by any page's `<script>` tags (see dormant note above). `assets/js/quote-calculator.js` fetches both `quote-settings.yml` and `pricing-tables.yml`, looks up the tier at or above the customer's usage (`findTier()` — rounds up, never interpolates), and picks one of three products based on their net-metering + battery-backup answers (`pickProductKey()`: net metering "yes" → `ongrid_nm`; otherwise `hybrid` if they want battery backup, else `ongrid`). No build step for any of it. Uploaded images land in `assets/images/uploads/` (Decap's `media_folder`), committed straight into the repo. FAQ Q&A pairs on `faq.html` are hardcoded HTML (not CMS-managed).
 
 If you ever add another editable content type, follow the same "single YAML file, no folder collection" pattern.
 
@@ -68,22 +69,24 @@ index.html               Homepage (hero, stats, first-year-service teaser, what-
 about.html                About Us: mission, vision, credentials, closing CTA
 services.html             Services overview (3 cards) + commercial strip + "How we work" (3 static tiles) + closing CTA — no longer has a photo gallery, see Content model above
 faq.html                  "How It Works" page (nav label; file/URL is still faq.html): 4-step process (long form) + FAQ accordion (8 Q&As) + closing CTA — no longer has an Articles section
-quote.html                Instant solar savings calculator ("See What It Costs" destination site-wide)
+quote.html                Instant solar savings calculator ("See What It Costs" destination site-wide) — one recommended system (Hybrid / Ongrid / Ongrid w/ Net Metering) looked up from content/pricing-tables.yml, not a formula
 contact.html               Contact form (Netlify Forms) with an optional electricity-bill photo attachment
 thank-you.html             Contact form post-submit redirect target
 admin/index.html            Decap CMS shell (loads CMS via CDN, no custom UI)
 admin/config.yml            Decap CMS backend/collections config (projects, articles, quote_settings) — projects/articles collections are dormant, see Content model above
 content/projects.yml         CMS-editable project gallery data (dormant — not currently rendered anywhere)
 content/articles.yml         CMS-editable articles data (dormant — not currently rendered anywhere)
-content/quote-settings.yml   CMS-editable quote calculator assumptions (electricity rate, cost/kWp, etc.)
+content/quote-settings.yml   CMS-editable: just solar_cost_php_per_kwh now (comparison-bar placeholder)
+content/pricing-tables.yml   The real quote calculator data — 31 consumption tiers x 3 products, see Content model above. Not CMS-editable yet.
 assets/css/styles.css       All styling (brand tokens + layout + components), shared across pages
 assets/js/main.js           Interactions (nav scroll/toggle, scroll-reveal, stat counters, accordion toggle) — shared across pages, safe no-op on pages missing an element
 assets/js/content.js         Fetches + renders content/*.yml — dormant, not currently loaded by any page (see Content model above)
-assets/js/quote-calculator.js Fetches content/quote-settings.yml, runs the calculator's math, renders results — only loaded on quote.html
+assets/js/quote-calculator.js Fetches quote-settings.yml + pricing-tables.yml, looks up the matching tier/product, renders one recommendation — only loaded on quote.html
 assets/images/               Working image assets (+ uploads/ for CMS-uploaded photos)
 assets/video/                Working video assets
 Branding/                    Client-provided source brand assets (do not edit)
 Video/                       Client-provided source video (do not edit)
+Pricing/                     Client-provided source pricing spreadsheet (do not edit) — see content/pricing-tables.yml for the transcribed, runtime-usable version
 robots.txt                   Allows crawling, disallows /admin/, points to sitemap.xml
 sitemap.xml                  Lists the 6 public pages (excludes thank-you.html and /admin/)
 PROGRESS.md                  Phase-by-phase status log

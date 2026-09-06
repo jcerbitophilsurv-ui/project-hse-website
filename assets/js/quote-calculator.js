@@ -14,6 +14,9 @@
   const phoneInput = document.getElementById('phoneInput');
   const netMeteringToggle = document.getElementById('netMeteringToggle');
   const netMeteringInput = document.getElementById('netMeteringInput');
+  const batteryRow = document.getElementById('batteryRow');
+  const batteryToggle = document.getElementById('batteryToggle');
+  const batteryInput = document.getElementById('batteryInput');
   const loadingEl = document.getElementById('quoteLoading');
   const resultsEl = document.getElementById('quoteResults');
   const netMeteringNote = document.getElementById('netMeteringNote');
@@ -21,28 +24,55 @@
   const statementKwhEl = document.getElementById('quoteStatementKwh');
   const resultGridCost = document.getElementById('resultGridCost');
   const resultSolarCost = document.getElementById('resultSolarCost');
-  const scenariosEl = document.getElementById('quoteScenarios');
+  const recommendationEl = document.getElementById('quoteRecommendation');
+  const assumptionsList = document.getElementById('quoteAssumptionsList');
   const quoteCta = document.getElementById('quoteCta');
   const loadingVideo = document.getElementById('quoteLoadingVideo');
   const loadingSpinner = document.getElementById('quoteLoadingSpinner');
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const SCENARIOS = [50, 70, 100];
+  const PROJECTION_HORIZON_YEARS = 10;
 
-  let settings = null;
+  const PRODUCT_LABELS = {
+    hybrid: 'Hybrid System — Battery Backup',
+    ongrid: 'Grid-Tied System — No Export',
+    ongrid_nm: 'Grid-Tied System — Net Metering',
+  };
 
-  async function loadSettings() {
-    const res = await fetch('content/quote-settings.yml');
+  let settings = null; // content/quote-settings.yml — just the solar-cost comparison figure now
+  let pricing = null; // content/pricing-tables.yml — the real system/price lookup
+
+  async function fetchYaml(path) {
+    const res = await fetch(path);
     const text = await res.text();
     return jsyaml.load(text);
   }
-  loadSettings().then((data) => { settings = data; }).catch((err) => console.error(err));
+
+  function loadData() {
+    return Promise.all([
+      fetchYaml('content/quote-settings.yml'),
+      fetchYaml('content/pricing-tables.yml'),
+    ]).then(([s, p]) => { settings = s; pricing = p; });
+  }
+  loadData().catch((err) => console.error(err));
 
   netMeteringToggle.querySelectorAll('.toggle-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       netMeteringToggle.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('is-active'));
       btn.classList.add('is-active');
       netMeteringInput.value = btn.dataset.value;
+      // A battery only matters as an alternative to net metering — if they've said
+      // yes to net metering there's no hybrid/battery product for that combination
+      // in the pricing reference, so the question doesn't apply.
+      batteryRow.hidden = btn.dataset.value === 'yes';
+    });
+  });
+
+  batteryToggle.querySelectorAll('.toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      batteryToggle.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      batteryInput.value = btn.dataset.value;
     });
   });
 
@@ -109,66 +139,60 @@
     setTimeout(finish, 15000);
   }
 
+  // Picks the first tier whose kwh is >= the customer's usage (never undersizes);
+  // clamps to the smallest/largest tier outside the reference sheet's 300-2000 kWh range.
+  function findTier(monthlyKwh) {
+    const tiers = pricing.tiers;
+    if (monthlyKwh <= tiers[0].kwh) return tiers[0];
+    for (const tier of tiers) {
+      if (tier.kwh >= monthlyKwh) return tier;
+    }
+    return tiers[tiers.length - 1];
+  }
+
+  function pickProductKey(inputs) {
+    if (inputs.netMetering === 'yes') return 'ongrid_nm';
+    return inputs.batteryBackup === 'yes' ? 'hybrid' : 'ongrid';
+  }
+
   function computeEstimate(inputs) {
-    const {
-      electricity_rate_php_per_kwh: rate,
-      yield_kwh_per_kwp_per_day: yieldPerDay,
-      panel_wattage_w: panelWattage,
-      cost_per_kwp_ongrid_low: ongridLow,
-      cost_per_kwp_ongrid_high: ongridHigh,
-      cost_per_kwp_hybrid_low: hybridLow,
-      cost_per_kwp_hybrid_high: hybridHigh,
-      inverter_sizes_kw: inverterSizes,
-    } = settings;
-
+    const rate = pricing.electricity_rate_php_per_kwh;
     const currentMonthlyKwh = inputs.kwh > 0 ? inputs.kwh : inputs.bill / rate;
-    const targetOffsetKwhPerMonth = currentMonthlyKwh * (inputs.reduction / 100);
-    const requiredKwp = (targetOffsetKwhPerMonth / 30) / yieldPerDay;
-    const panelCount = Math.max(1, Math.ceil((requiredKwp * 1000) / panelWattage));
-    const actualSystemKwp = (panelCount * panelWattage) / 1000;
+    const tier = findTier(currentMonthlyKwh);
+    const productKey = pickProductKey(inputs);
+    const product = tier[productKey];
 
-    const sortedSizes = inverterSizes.map((s) => s.size).sort((a, b) => a - b);
-    const recommendedInverterKw = sortedSizes.find((s) => s >= actualSystemKwp) || sortedSizes[sortedSizes.length - 1];
-
-    const [costLow, costHigh] = inputs.netMetering === 'yes'
-      ? [actualSystemKwp * ongridLow, actualSystemKwp * ongridHigh]
-      : [actualSystemKwp * hybridLow, actualSystemKwp * hybridHigh];
-
-    const estimatedMonthlyProductionKwh = actualSystemKwp * yieldPerDay * 30;
-    const newMonthlyKwh = Math.max(0, currentMonthlyKwh - estimatedMonthlyProductionKwh);
     const currentMonthlyBill = currentMonthlyKwh * rate;
-    const newMonthlyBill = newMonthlyKwh * rate;
-    const monthlySavings = currentMonthlyBill - newMonthlyBill;
-    const avgCost = (costLow + costHigh) / 2;
-    const paybackYears = monthlySavings > 0 ? avgCost / (monthlySavings * 12) : null;
+    const annualSavings = product.savings_per_year;
+    const monthlySavings = annualSavings / 12;
+    const newMonthlyBill = Math.max(0, currentMonthlyBill - monthlySavings);
+    const roiYears = product.price / annualSavings;
 
     return {
-      actualSystemKwp,
-      panelCount,
-      panelWattage,
-      recommendedInverterKw,
-      costLow,
-      costHigh,
-      avgCost,
-      currentMonthlyKwh,
-      newMonthlyBill,
-      currentMonthlyBill,
+      productKey,
+      productLabel: PRODUCT_LABELS[productKey],
+      tierKwh: tier.kwh,
+      pvKwp: product.pv_kwp,
+      batteryKwh: product.battery_kwh || 0,
+      coverage: product.coverage,
+      price: product.price,
+      annualSavings,
       monthlySavings,
-      paybackYears,
-      inverterType: inputs.netMetering === 'yes' ? 'grid-tied inverter' : 'hybrid inverter',
+      roiYears,
+      currentMonthlyKwh,
+      currentMonthlyBill,
+      newMonthlyBill,
+      exceedsReferenceRange: currentMonthlyKwh > pricing.tiers[pricing.tiers.length - 1].kwh,
     };
   }
 
-  const PROJECTION_HORIZON_YEARS = 10;
-
   function computeProjection(result) {
-    const annualSavings = result.monthlySavings * 12;
-    const cumulativeAtHorizon = annualSavings * PROJECTION_HORIZON_YEARS;
-    const remaining = Math.max(0, result.avgCost - cumulativeAtHorizon);
-    const netBenefitAtHorizon = cumulativeAtHorizon - result.avgCost;
-    const isPaidBackWithinHorizon = result.paybackYears !== null && result.paybackYears <= PROJECTION_HORIZON_YEARS;
-    const savingsByYear = Array.from({ length: PROJECTION_HORIZON_YEARS + 1 }, (_, year) => result.monthlySavings * 12 * year);
-    return { annualSavings, cumulativeAtHorizon, remaining, netBenefitAtHorizon, isPaidBackWithinHorizon, savingsByYear };
+    const cumulativeAtHorizon = result.annualSavings * PROJECTION_HORIZON_YEARS;
+    const remaining = Math.max(0, result.price - cumulativeAtHorizon);
+    const netBenefitAtHorizon = cumulativeAtHorizon - result.price;
+    const isPaidBackWithinHorizon = result.roiYears <= PROJECTION_HORIZON_YEARS;
+    const savingsByYear = Array.from({ length: PROJECTION_HORIZON_YEARS + 1 }, (_, year) => result.annualSavings * year);
+    return { cumulativeAtHorizon, remaining, netBenefitAtHorizon, isPaidBackWithinHorizon, savingsByYear };
   }
 
   // Small inline chart: cumulative savings (accent line) against the investment
@@ -179,12 +203,12 @@
     const plotW = W - padL - padR;
     const plotH = H - padT - padB;
     const horizon = PROJECTION_HORIZON_YEARS;
-    const maxY = Math.max(result.avgCost, projection.savingsByYear[horizon], 1) * 1.15;
+    const maxY = Math.max(result.price, projection.savingsByYear[horizon], 1) * 1.15;
 
     const x = (year) => padL + (year / horizon) * plotW;
     const y = (value) => padT + plotH - (value / maxY) * plotH;
 
-    const thresholdY = y(result.avgCost);
+    const thresholdY = y(result.price);
     const linePoints = projection.savingsByYear.map((v, year) => `${x(year).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
 
     const endYear = horizon;
@@ -195,7 +219,7 @@
 
     let paybackMarkup = '';
     if (projection.isPaidBackWithinHorizon) {
-      const py = result.paybackYears;
+      const py = result.roiYears;
       const px = x(py);
       const paybackAnchor = px < 50 ? 'start' : px > (W - 50) ? 'end' : 'middle';
       paybackMarkup = `
@@ -215,7 +239,7 @@
     return `
       <svg class="quote-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${horizon}-year cumulative savings versus investment cost">
         <line class="quote-chart-threshold" x1="${x(0).toFixed(1)}" y1="${thresholdY.toFixed(1)}" x2="${x(horizon).toFixed(1)}" y2="${thresholdY.toFixed(1)}" />
-        <text class="quote-chart-threshold-label" x="${x(0).toFixed(1)}" y="${(thresholdY - 6).toFixed(1)}">Investment: ${pesoFormat(result.avgCost)}</text>
+        <text class="quote-chart-threshold-label" x="${x(0).toFixed(1)}" y="${(thresholdY - 6).toFixed(1)}">Investment: ${pesoFormat(result.price)}</text>
         <polyline class="quote-chart-savings-line" points="${linePoints}" />
         <circle class="quote-chart-dot" cx="${x(0).toFixed(1)}" cy="${y(0).toFixed(1)}" r="4" />
         <circle class="quote-chart-dot" cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4"><title>Year ${horizon} cumulative savings: ${pesoFormat(endValue)}</title></circle>
@@ -226,42 +250,38 @@
     `;
   }
 
-  function runScenarios(inputs) {
-    return SCENARIOS.map((reduction) => {
-      const result = computeEstimate({ ...inputs, reduction });
-      const projection = computeProjection(result);
-      return { reduction, result, projection };
-    });
-  }
-
-  const SCENARIO_LABELS = {
-    50: 'Covers about half your bill',
-    70: 'Covers most of it',
-    100: 'Covers all your usage',
-  };
-
-  function renderScenarioCard({ reduction, result, projection }) {
-    const projectionLine = projection.isPaidBackWithinHorizon
-      ? `Paid back in <strong>~${result.paybackYears.toFixed(1)} years</strong> — <strong>${pesoFormat(projection.netBenefitAtHorizon)}</strong> net benefit by year ${PROJECTION_HORIZON_YEARS}`
-      : `Not yet paid back within ${PROJECTION_HORIZON_YEARS} years — <strong>${pesoFormat(projection.remaining)}</strong> of installed cost remaining`;
-
+  function renderRecommendation(result, projection) {
+    const coveragePct = Math.round(result.coverage * 100);
     const energyChargeLine = result.newMonthlyBill <= 0
       ? '<strong>Energy charge covered in full</strong>'
       : `Estimated energy charge: <strong>${pesoFormat(result.newMonthlyBill)}</strong> <span class="quote-scenario-was">(from ${pesoFormat(result.currentMonthlyBill)})</span>`;
 
-    return `
+    const projectionLine = projection.isPaidBackWithinHorizon
+      ? `Paid back in <strong>~${result.roiYears.toFixed(1)} years</strong> — <strong>${pesoFormat(projection.netBenefitAtHorizon)}</strong> net benefit by year ${PROJECTION_HORIZON_YEARS}`
+      : `Not yet paid back within ${PROJECTION_HORIZON_YEARS} years — <strong>${pesoFormat(projection.remaining)}</strong> of installed cost remaining`;
+
+    const batteryLine = result.batteryKwh > 0
+      ? `<li>Includes a <strong>${result.batteryKwh.toFixed(1)} kWh</strong> battery bank for power during outages</li>`
+      : '';
+
+    const rangeNote = result.exceedsReferenceRange
+      ? '<p class="quote-scenario-was">Your usage is above our standard reference range — this uses our largest reference tier as a starting point; your final system will need a custom site assessment.</p>'
+      : '';
+
+    recommendationEl.innerHTML = `
       <div class="quote-scenario-card">
         <div class="quote-scenario-head">
-          <span class="quote-scenario-badge">${SCENARIO_LABELS[reduction] || reduction + '% Bill Reduction'}</span>
-          <span class="quote-scenario-size" data-kwp="${result.actualSystemKwp}">0 kWp</span>
+          <span class="quote-scenario-badge">${result.productLabel}</span>
+          <span class="quote-scenario-size" data-kwp="${result.pvKwp}">0 kWp</span>
         </div>
         <ul class="quote-scenario-facts">
-          <li><strong>${result.panelCount} &times; ${result.panelWattage}W</strong> solar panels</li>
-          <li>Recommended <strong>~${result.recommendedInverterKw}kW ${result.inverterType}</strong></li>
-          <li>Estimated installed cost: <strong>${pesoFormat(result.costLow)} &ndash; ${pesoFormat(result.costHigh)}</strong></li>
+          <li>Covers approximately <strong>${coveragePct}%</strong> of your usage</li>
+          ${batteryLine}
+          <li>Estimated installed cost: <strong>${pesoFormat(result.price)}</strong></li>
           <li>${energyChargeLine}</li>
-          <li>Monthly savings: <strong>${pesoFormat(result.monthlySavings)}</strong> &middot; Annual savings: <strong>${pesoFormat(projection.annualSavings)}</strong></li>
+          <li>Monthly savings: <strong>${pesoFormat(result.monthlySavings)}</strong> &middot; Annual savings: <strong>${pesoFormat(result.annualSavings)}</strong></li>
         </ul>
+        ${rangeNote}
         <div class="quote-scenario-projection">
           <p class="quote-scenario-projection-label">${PROJECTION_HORIZON_YEARS}-Year Projection</p>
           ${buildProjectionChart(result, projection)}
@@ -269,27 +289,44 @@
         </div>
       </div>
     `;
+
+    const sizeEl = recommendationEl.querySelector('.quote-scenario-size');
+    animateValue(sizeEl, 0, result.pvKwp, 1200, (v) => v.toFixed(1) + ' kWp');
   }
 
-  function renderResults(scenarios, inputs) {
-    statementNameEl.textContent = inputs.name ? `Estimate for ${inputs.name}` : 'Your Estimate';
-    animateValue(statementKwhEl, 0, scenarios[0].result.currentMonthlyKwh, 1200, (v) => Math.round(v).toLocaleString('en-US'));
+  function buildAssumptions(result) {
+    const common = [
+      `Electricity at ${pesoRateFormat(pricing.electricity_rate_php_per_kwh)}/kWh, the Meralco residential rate for September 2026. Your rate will differ if another utility supplies you.`,
+      'Fixed charges stay on your bill whatever you generate.',
+      `Sized on ${pricing.peak_sun_hours} kWh per kWp per day (peak sun hours), a full-year average rather than a clear day.`,
+    ];
 
-    resultGridCost.textContent = pesoRateFormat(settings.electricity_rate_php_per_kwh);
+    let productSpecific;
+    if (result.productKey === 'hybrid') {
+      productSpecific = 'Your battery is sized to your nighttime usage, and your panels are sized to fully recharge it every day — this system is designed to cover close to all of your usage.';
+    } else if (result.productKey === 'ongrid_nm') {
+      productSpecific = `This system is sized to cover your full monthly usage. Any surplus you export is credited at ${pesoRateFormat(pricing.export_credit_php_per_kwh)}/kWh — the generation charge, not the full retail rate.`;
+    } else {
+      productSpecific = "This system is sized to what your home uses during the day, without exporting power back to the grid — typically covering around 40% of your total usage, with the rest still drawn from the grid as usual.";
+    }
+
+    const items = [common[0], productSpecific, common[1], common[2], "This is an estimate, not a quote. The real figure comes after we've seen your roof."];
+    assumptionsList.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
+  }
+
+  function renderResults(result, projection, inputs) {
+    statementNameEl.textContent = inputs.name ? `Estimate for ${inputs.name}` : 'Your Estimate';
+    animateValue(statementKwhEl, 0, result.currentMonthlyKwh, 1200, (v) => Math.round(v).toLocaleString('en-US'));
+
+    resultGridCost.textContent = pesoRateFormat(pricing.electricity_rate_php_per_kwh);
     resultSolarCost.textContent = pesoRateFormat(settings.solar_cost_php_per_kwh);
 
-    scenariosEl.innerHTML = scenarios.map(renderScenarioCard).join('');
-    scenariosEl.querySelectorAll('.quote-scenario-size').forEach((el) => {
-      const kwp = parseFloat(el.dataset.kwp);
-      animateValue(el, 0, kwp, 1200, (v) => v.toFixed(1) + ' kWp');
-    });
+    renderRecommendation(result, projection);
+    buildAssumptions(result);
 
     netMeteringNote.hidden = inputs.netMetering !== 'yes';
 
-    const scenarioSummary = scenarios.map(({ reduction, result }) =>
-      `${reduction}% reduction → ~${result.actualSystemKwp.toFixed(1)}kWp (${result.panelCount}x ${result.panelWattage}W, ~${result.recommendedInverterKw}kW ${result.inverterType}), est. cost ${pesoFormat(result.costLow)}-${pesoFormat(result.costHigh)}, new bill ~${pesoFormat(result.newMonthlyBill)}/mo.`
-    ).join(' ');
-    const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, net metering: ${inputs.netMetering}. ${scenarioSummary}`;
+    const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, net metering: ${inputs.netMetering}, battery backup: ${inputs.batteryBackup}. Recommended ${result.productLabel} (~${result.pvKwp.toFixed(1)}kWp), estimated cost ${pesoFormat(result.price)}, new monthly bill ~${pesoFormat(result.newMonthlyBill)}.`;
     quoteCta.href = 'contact.html?prefill=' + encodeURIComponent(summary)
       + '&name=' + encodeURIComponent(inputs.name)
       + '&email=' + encodeURIComponent(inputs.email)
@@ -311,6 +348,7 @@
       bill: String(inputs.bill),
       kwh: inputs.kwh ? String(inputs.kwh) : '',
       'net-metering': inputs.netMetering,
+      'battery-backup': inputs.batteryBackup,
     }).toString();
 
     fetch('/', {
@@ -354,8 +392,8 @@
       return;
     }
 
-    if (!settings) {
-      loadSettings().then((data) => { settings = data; submitEstimate(); }).catch((err) => console.error(err));
+    if (!settings || !pricing) {
+      loadData().then(submitEstimate).catch((err) => console.error(err));
       return;
     }
     submitEstimate();
@@ -365,6 +403,7 @@
         bill,
         kwh: parseFloat(kwhInput.value) || 0,
         netMetering: netMeteringInput.value,
+        batteryBackup: netMeteringInput.value === 'yes' ? 'no' : batteryInput.value,
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         phone: phoneInput.value.trim(),
@@ -373,8 +412,9 @@
       submitLead(inputs);
 
       playLoadingTransition(() => {
-        const scenarios = runScenarios(inputs);
-        renderResults(scenarios, inputs);
+        const result = computeEstimate(inputs);
+        const projection = computeProjection(result);
+        renderResults(result, projection, inputs);
       });
     }
   });

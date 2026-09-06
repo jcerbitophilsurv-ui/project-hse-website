@@ -148,6 +148,16 @@
               </div>
             </div>
 
+            <div class="form-row" id="batteryRow" hidden>
+              <label>Do you want battery backup for power outages?</label>
+              <div class="toggle-pair" id="batteryToggle" role="group" aria-label="Battery backup">
+                <button type="button" class="toggle-btn is-active" data-value="no">No</button>
+                <button type="button" class="toggle-btn" data-value="yes">Yes</button>
+              </div>
+              <input type="hidden" id="batteryInput" name="battery-backup" value="no">
+              <p class="field-hint">Solar alone won't power your home during a brownout — a battery will.</p>
+            </div>
+
             <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Show My Estimate</button>
           </div>
 
@@ -179,11 +189,15 @@
             </div>
           </div>
 
-          <div class="quote-scenarios" id="quoteScenarios"></div>
-          <p class="quote-scenarios-note">Your bill will still carry the fixed charges that appear whatever you generate.</p>
+          <div class="quote-recommendation" id="quoteRecommendation"></div>
 
           <div class="quote-note" id="netMeteringNote" hidden>
             <p>Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking <strong>2–4 months</strong> to complete.</p>
+          </div>
+
+          <div class="quote-assumptions">
+            <p class="quote-assumptions-label">How we worked this out</p>
+            <ul id="quoteAssumptionsList"></ul>
           </div>
 
           <p class="quote-disclaimer">This is a ballpark estimate based on typical Philippine market pricing and average solar yield. Your final quote will depend on a free assessment of your roof, shading, and electrical setup.</p>

@@ -51,17 +51,4 @@ collections:
         label: "Quote Calculator Assumptions"
         name: "quote_settings"
         fields:
-          - { label: "Grid Electricity Cost (₱ per kWh)", name: "electricity_rate_php_per_kwh", widget: "number", value_type: "float" }
           - { label: "Solar Cost (₱ per kWh)", name: "solar_cost_php_per_kwh", widget: "number", value_type: "float" }
-          - { label: "Solar Yield (kWh per kWp per day)", name: "yield_kwh_per_kwp_per_day", widget: "number", value_type: "float" }
-          - { label: "Panel Wattage (W)", name: "panel_wattage_w", widget: "number" }
-          - { label: "On-Grid Installed Cost per kWp — Low (₱)", name: "cost_per_kwp_ongrid_low", widget: "number" }
-          - { label: "On-Grid Installed Cost per kWp — High (₱)", name: "cost_per_kwp_ongrid_high", widget: "number" }
-          - { label: "Hybrid/Battery Installed Cost per kWp — Low (₱)", name: "cost_per_kwp_hybrid_low", widget: "number" }
-          - { label: "Hybrid/Battery Installed Cost per kWp — High (₱)", name: "cost_per_kwp_hybrid_high", widget: "number" }
-          - label: "Available Inverter Sizes (kW)"
-            name: "inverter_sizes_kw"
-            widget: "list"
-            summary: "{{fields.size}} kW"
-            fields:
-              - { label: "Size (kW)", name: "size", widget: "number" }

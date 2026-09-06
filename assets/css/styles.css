@@ -816,8 +816,7 @@ img { max-width: 100%; display: block; }
 .quote-cost-unit { font-size: 0.75rem; color: var(--color-gray); }
 .quote-cost-vs { font-size: 0.8rem; font-weight: 700; color: var(--color-gray); }
 
-.quote-scenarios { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
-.quote-scenarios-note { font-size: 0.82rem; color: var(--color-gray); text-align: center; margin: -12px 0 24px; }
+.quote-recommendation { margin-bottom: 24px; }
 .quote-scenario-card {
   background: var(--color-white);
   border-radius: var(--radius);
@@ -880,6 +879,18 @@ img { max-width: 100%; display: block; }
   margin-bottom: 20px;
 }
 .quote-note p { font-size: 0.85rem; color: var(--color-green-dark); }
+
+.quote-assumptions {
+  background: var(--color-gray-light);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin-bottom: 20px;
+}
+.quote-assumptions-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--color-green); margin-bottom: 10px; }
+.quote-assumptions ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.quote-assumptions li { font-size: 0.85rem; color: var(--color-gray); padding-left: 16px; position: relative; }
+.quote-assumptions li::before { content: '—'; position: absolute; left: 0; color: var(--color-gray); }
+
 .quote-disclaimer { font-size: 0.78rem; color: var(--color-gray); font-style: italic; margin-bottom: 24px; }
 .quote-results .btn { width: 100%; text-align: center; justify-content: center; }
 .quote-edit-link {
