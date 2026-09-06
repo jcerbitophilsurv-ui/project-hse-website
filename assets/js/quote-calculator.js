@@ -310,7 +310,7 @@
       productSpecific = "This system is sized to what your home uses during the day, without exporting power back to the grid — typically covering around 40% of your total usage, with the rest still drawn from the grid as usual.";
     }
 
-    const items = [common[0], productSpecific, common[1], common[2], "This is an estimate, not a quote. The real figure comes after we've seen your roof."];
+    const items = [common[0], productSpecific, common[1], common[2]];
     assumptionsList.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
   }
 
