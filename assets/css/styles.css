@@ -373,10 +373,11 @@ img { max-width: 100%; display: block; }
 .commercial-strip {
   text-align: center;
   margin-top: 56px;
-  padding-top: 40px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 48px 40px;
+  border-radius: var(--radius);
+  background: var(--color-green);
 }
-.commercial-strip p { color: var(--color-gray); margin-bottom: 16px; }
+.commercial-strip p { color: var(--color-white); font-size: 1.15rem; margin-bottom: 20px; }
 
 /* ===== Process ===== */
 .process {
