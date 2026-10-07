@@ -289,7 +289,7 @@
         email: emailInput.value.trim(),
         phone: phoneInput.value.trim(),
         dataConsent: dataConsentInput.checked,
-        marketingOptIn: marketingOptInInput.checked,
+        marketingOptIn: marketingOptInInput ? marketingOptInInput.checked : false,
       };
 
       submitLead(inputs);
