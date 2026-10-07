@@ -790,6 +790,7 @@ img { max-width: 100%; display: block; }
 .contact-form-wrap h2, .contact-info h2 { margin-bottom: 24px; }
 .contact-form { display: flex; flex-direction: column; gap: 20px; }
 .form-row { display: flex; flex-direction: column; gap: 8px; }
+.form-row[hidden] { display: none; }
 .form-row-split { flex-direction: row; gap: 20px; }
 .form-row-split > div { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .contact-form label { font-size: 0.85rem; font-weight: 700; color: var(--color-green); }
