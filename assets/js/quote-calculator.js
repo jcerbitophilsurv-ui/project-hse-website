@@ -48,6 +48,9 @@
   }
   loadData().catch((err) => console.error(err));
 
+  // No net-metering option is pre-selected in the markup, so batteryRow stays
+  // hidden (its default HTML state) until the visitor actually picks "No" or
+  // "Not sure yet" below.
   netMeteringToggle.querySelectorAll('.toggle-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       netMeteringToggle.querySelectorAll('.toggle-btn').forEach((b) => b.classList.remove('is-active'));
@@ -59,11 +62,6 @@
       batteryRow.hidden = btn.dataset.value === 'yes';
     });
   });
-  // Sync on load too - the markup defaults net metering to "no" (battery row
-  // should show), but batteryRow's own "hidden" attribute is also set in the
-  // markup and was previously only ever cleared by the click handler above,
-  // so it stayed hidden until the user interacted with the toggle at all.
-  batteryRow.hidden = netMeteringInput.value === 'yes';
 
   batteryToggle.querySelectorAll('.toggle-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
