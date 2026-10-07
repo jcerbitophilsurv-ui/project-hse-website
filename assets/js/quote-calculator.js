@@ -19,7 +19,6 @@
   const batteryInput = document.getElementById('batteryInput');
   const dataConsentInput = document.getElementById('dataConsent');
   const consentError = document.getElementById('consentError');
-  const marketingOptInInput = document.getElementById('marketingOptIn');
   const loadingEl = document.getElementById('quoteLoading');
   const sendErrorEl = document.getElementById('quoteSendError');
   const resultsEl = document.getElementById('quoteResults');
@@ -183,7 +182,6 @@
       'net-metering': inputs.netMetering,
       'battery-backup': inputs.batteryBackup,
       'data-consent': inputs.dataConsent ? 'yes' : 'no',
-      'marketing-optin': inputs.marketingOptIn ? 'yes' : 'no',
     }).toString();
 
     fetch('/', {
@@ -289,7 +287,6 @@
         email: emailInput.value.trim(),
         phone: phoneInput.value.trim(),
         dataConsent: dataConsentInput.checked,
-        marketingOptIn: marketingOptInInput ? marketingOptInInput.checked : false,
       };
 
       submitLead(inputs);
