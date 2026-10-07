@@ -104,8 +104,9 @@
 <div class="modal-overlay" id="applyModalOverlay" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="applyModalTitle">
     <button type="button" class="modal-close" id="applyModalClose" aria-label="Close">&times;</button>
-    <h2 id="applyModalTitle">Apply for <span id="applyModalRole">this role</span></h2>
-    <form id="applyForm" name="job-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" action="thank-you.html">
+    <p class="modal-eyebrow">Applying for <span id="applyModalRole">this role</span></p>
+    <h2 id="applyModalTitle">Tell us about yourself</h2>
+    <form id="applyForm" class="apply-form" name="job-application" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" action="thank-you.html">
       <input type="hidden" name="form-name" value="job-application">
       <input type="hidden" name="role" id="applyRoleInput" value="">
       <p class="hp-field"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>

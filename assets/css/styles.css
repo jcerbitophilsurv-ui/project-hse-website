@@ -682,7 +682,34 @@ img { max-width: 100%; display: block; }
   overflow-y: auto;
   position: relative;
 }
-.modal h2 { color: var(--color-green); margin-bottom: 20px; padding-right: 24px; }
+.modal-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-gold-dark);
+  margin-bottom: 6px;
+  padding-right: 24px;
+}
+.modal h2 {
+  font-size: 1.3rem;
+  color: var(--color-green);
+  margin-bottom: 22px;
+  padding-right: 24px;
+}
+.apply-form { display: flex; flex-direction: column; gap: 20px; }
+.apply-form label { font-size: 0.85rem; font-weight: 700; color: var(--color-green); }
+.apply-form input {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 14px 16px;
+  border: 1.5px solid var(--color-gray-light);
+  border-radius: 10px;
+  background: var(--color-off-white);
+  transition: border-color var(--transition);
+  width: 100%;
+}
+.apply-form input:focus { outline: none; border-color: var(--color-green); }
 .modal-close {
   position: absolute;
   top: 20px; right: 20px;
