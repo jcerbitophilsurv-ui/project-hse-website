@@ -79,6 +79,52 @@
     }
   }
 
+  function formatJobDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function jobCardHTML(job) {
+    const qualifications = Array.isArray(job.qualifications) ? job.qualifications : [];
+    const qualificationsHtml = qualifications.length
+      ? `<ul class="job-qualifications">${qualifications.map((q) => `<li>${escapeHTML(q)}</li>`).join('')}</ul>`
+      : '';
+    const posted = formatJobDate(job.posted_date);
+    const applyMessage = `Application for: ${job.title || 'this role'}`;
+    const applyHref = 'contact.html?prefill=' + encodeURIComponent(applyMessage) + '&source=careers';
+
+    return `
+      <div class="job-card">
+        <div class="job-card-head">
+          <h3>${escapeHTML(job.title)}</h3>
+          <span class="job-card-type">${escapeHTML(job.type)}</span>
+        </div>
+        <p class="job-card-location">${escapeHTML(job.location)}${posted ? ` &middot; Posted ${escapeHTML(posted)}` : ''}</p>
+        <p class="job-card-summary">${escapeHTML(job.summary)}</p>
+        ${qualificationsHtml}
+        <a href="${applyHref}" class="btn btn-gold">Apply for this role</a>
+      </div>
+    `;
+  }
+
+  async function renderJobs() {
+    const list = document.getElementById('jobsList');
+    if (!list) return;
+    try {
+      const data = await fetchYaml('content/jobs.yml');
+      const jobs = (data && data.jobs) || [];
+      list.innerHTML = jobs.length
+        ? jobs.map(jobCardHTML).join('')
+        : '<p class="content-empty">There are no open roles right now. We\'re always glad to hear from people who want to work in solar — send your CV to <a href="mailto:sales@horizonsolar.net">sales@horizonsolar.net</a> and we\'ll keep it on file.</p>';
+    } catch (err) {
+      list.innerHTML = '<p class="content-empty">Unable to load open roles right now. Please try again shortly.</p>';
+      console.error(err);
+    }
+  }
+
   renderProjects();
   renderArticles();
+  renderJobs();
 })();

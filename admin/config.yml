@@ -52,3 +52,29 @@ collections:
         name: "quote_settings"
         fields:
           - { label: "Solar Cost (₱ per kWh)", name: "solar_cost_php_per_kwh", widget: "number", value_type: "float" }
+
+  - name: "jobs"
+    label: "Work With Us (Job Postings)"
+    files:
+      - file: "content/jobs.yml"
+        label: "Job Postings"
+        name: "jobs"
+        fields:
+          - label: "Jobs"
+            name: "jobs"
+            widget: "list"
+            summary: "{{title}} — {{location}}"
+            fields:
+              - { label: "Job Title", name: "title", widget: "string" }
+              - { label: "Location", name: "location", widget: "string", default: "Metro Manila, Philippines" }
+              - label: "Employment Type"
+                name: "type"
+                widget: "select"
+                options: ["Full-time", "Part-time", "Contract"]
+                default: "Full-time"
+              - { label: "Summary", name: "summary", widget: "text", hint: "One or two sentences describing the role — shown on the job card." }
+              - label: "Qualifications"
+                name: "qualifications"
+                widget: "list"
+                field: { label: "Qualification", name: "item", widget: "string" }
+              - { label: "Posted Date", name: "posted_date", widget: "datetime", format: "YYYY-MM-DD" }
