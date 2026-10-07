@@ -922,7 +922,10 @@ img { max-width: 100%; display: block; }
   .contact-info { order: -1; }
 }
 
-@media (max-width: 720px) {
+/* Nav collapses to the hamburger menu earlier than the other breakpoints below -
+   six items (five labels + Work With Us) no longer fit the header comfortably
+   down to 720px, so this gets its own wider threshold. */
+@media (max-width: 1040px) {
   .main-nav {
     position: fixed;
     top: var(--header-h);
@@ -941,7 +944,9 @@ img { max-width: 100%; display: block; }
   .main-nav a::after { display: none; }
   .nav-toggle { display: flex; }
   .header-actions .btn-sm { display: none; }
+}
 
+@media (max-width: 720px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .cards-grid { grid-template-columns: 1fr; }
   .values-grid { grid-template-columns: 1fr 1fr; }

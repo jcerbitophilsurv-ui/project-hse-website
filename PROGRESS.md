@@ -241,4 +241,5 @@ Since each product now has a **fixed** coverage percentage (not a customer-adjus
 
 **Outstanding**:
 - No job postings exist yet — add real ones via `/admin/` when there's an actual role to list.
-- Decide whether "Work With Us" should also appear in the main nav, not just the footer.
+
+**Update (2026-10-07): also added to the main nav, not just the footer.** User asked for it in the header. Added to all 9 pages (the 8 above + `thank-you.html`, which has its own copy of the nav too), between Services and Contact. Six nav items plus the logo and "See What It Costs" button no longer comfortably fit the header down to the old 720px mobile-nav breakpoint, so that breakpoint was split: the hamburger-menu/nav-collapse rules now kick in at a new, wider 1040px threshold (their own `@media` block), while the unrelated grid-layout rules that used to share the 720px block (stats, cards, gallery, jobs, timeline, footer grids) are untouched and still switch at 720px. This avoids a cramped/overflowing nav on tablet-ish and smaller-laptop widths that the old single breakpoint didn't anticipate for six items.
