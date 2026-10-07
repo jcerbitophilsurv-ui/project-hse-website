@@ -88,7 +88,7 @@ netlify/functions/send-quote.js  The one Netlify Function in the project — ema
 contact.html               Contact form (Netlify Forms) with an optional electricity-bill photo attachment
 thank-you.html             Contact form post-submit redirect target
 privacy.html               Privacy Policy — content complete (brackets filled per user direction), NOT yet lawyer-confirmed, still noindex. See Tech stack note above and PROGRESS.md Phase 7.
-work-with-us.html           Careers page — lists open roles from content/jobs.yml (CMS-editable), empty-state message when there are none. See Content model above and PROGRESS.md Phase 9.
+work-with-us.html           Careers page — lists open roles from content/jobs.yml (CMS-editable), empty-state message when there are none. "Apply for this role" opens an in-page modal (its own Netlify Form, job-application, with a required resume upload) instead of linking out. See Content model above and PROGRESS.md Phase 9.
 admin/index.html            Decap CMS shell (loads CMS via CDN, no custom UI)
 admin/config.yml            Decap CMS backend/collections config (projects, articles, quote_settings, jobs) — projects/articles collections are dormant, jobs is live, see Content model above
 content/projects.yml         CMS-editable project gallery data (dormant — not currently rendered anywhere)
@@ -99,6 +99,7 @@ content/jobs.yml             CMS-editable job postings for work-with-us.html —
 assets/css/styles.css       All styling (brand tokens + layout + components), shared across pages
 assets/js/main.js           Interactions (nav scroll/toggle, scroll-reveal, stat counters, accordion toggle) — shared across pages, safe no-op on pages missing an element
 assets/js/content.js         Fetches + renders content/*.yml — renderProjects()/renderArticles() still dormant, renderJobs() live on work-with-us.html (see Content model above)
+assets/js/apply-modal.js     Opens/closes the work-with-us.html apply modal and sets its hidden role field — only loaded on that page
 assets/js/quote-calculator.js Fetches quote-settings.yml + pricing-tables.yml, looks up the matching tier/product, POSTs the computed estimate to the send-quote function — only loaded on quote.html
 assets/images/               Working image assets (+ uploads/ for CMS-uploaded photos)
 assets/video/                Working video assets

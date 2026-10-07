@@ -655,10 +655,51 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
 }
 .job-card-location { font-size: 0.85rem; color: var(--color-gray); margin-bottom: 14px; }
-.job-card-summary { color: var(--color-gray); font-size: 0.95rem; margin-bottom: 16px; }
+.job-card-summary { color: var(--color-gray); font-size: 0.95rem; margin-bottom: 16px; text-align: justify; }
 .job-qualifications { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
 .job-qualifications li { font-size: 0.88rem; color: var(--color-gray); padding-left: 16px; position: relative; }
 .job-qualifications li::before { content: '—'; position: absolute; left: 0; color: var(--color-gold-dark); }
+
+/* ===== Apply modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 20, 12, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+.modal-overlay[hidden] { display: none; }
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius);
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  position: relative;
+}
+.modal h2 { color: var(--color-green); margin-bottom: 20px; padding-right: 24px; }
+.modal-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 32px; height: 32px;
+  border: none;
+  background: var(--color-gray-light);
+  color: var(--color-green);
+  border-radius: 50%;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-close:hover { background: var(--color-green); color: var(--color-white); }
+.modal .btn { width: 100%; text-align: center; justify-content: center; margin-top: 6px; }
 
 /* ===== FAQ / Articles accordion ===== */
 .faq, .articles { padding: 90px 0; background: var(--color-white); }
@@ -961,5 +1002,6 @@ img { max-width: 100%; display: block; }
   .accordion-item.is-open .accordion-panel { padding: 0 20px 20px; }
 
   .quote-card { padding: 28px 20px; }
+  .modal { padding: 28px 20px; }
   .toggle-pair { flex-direction: column; }
 }

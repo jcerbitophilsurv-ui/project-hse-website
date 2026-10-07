@@ -92,8 +92,7 @@
       ? `<ul class="job-qualifications">${qualifications.map((q) => `<li>${escapeHTML(q)}</li>`).join('')}</ul>`
       : '';
     const posted = formatJobDate(job.posted_date);
-    const applyMessage = `Application for: ${job.title || 'this role'}`;
-    const applyHref = 'contact.html?prefill=' + encodeURIComponent(applyMessage) + '&source=careers';
+    const roleAttr = escapeHTML(job.title || 'this role');
 
     return `
       <div class="job-card">
@@ -104,7 +103,7 @@
         <p class="job-card-location">${escapeHTML(job.location)}${posted ? ` &middot; Posted ${escapeHTML(posted)}` : ''}</p>
         <p class="job-card-summary">${escapeHTML(job.summary)}</p>
         ${qualificationsHtml}
-        <a href="${applyHref}" class="btn btn-gold">Apply for this role</a>
+        <button type="button" class="btn btn-gold job-apply-btn" data-role="${roleAttr}">Apply for this role</button>
       </div>
     `;
   }
