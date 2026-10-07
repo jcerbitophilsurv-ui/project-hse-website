@@ -288,13 +288,10 @@ img { max-width: 100%; display: block; }
 .about-visual-frame {
   background: var(--color-gray-light);
   border-radius: var(--radius);
-  padding: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   aspect-ratio: 1 / 1;
+  overflow: hidden;
 }
-.about-emblem { width: 70%; }
+.about-emblem { width: 100%; height: 100%; object-fit: cover; display: block; }
 .about-copy .lead {
   font-size: 1.2rem;
   font-weight: 600;
@@ -710,6 +707,14 @@ img { max-width: 100%; display: block; }
 .contact-info-label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-gold-dark); margin-bottom: 4px; }
 .contact-note { font-size: 0.8rem; color: var(--color-gray); font-style: italic; }
 
+/* ===== Privacy page ===== */
+.privacy-section { padding: 90px 0; background: var(--color-white); }
+.privacy-content { max-width: 760px; margin: 0 auto; }
+.privacy-updated { font-size: 0.9rem; color: var(--color-gray); margin-bottom: 36px; }
+.privacy-content h2 { color: var(--color-green); margin-top: 40px; margin-bottom: 12px; }
+.privacy-content h2:first-of-type { margin-top: 0; }
+.privacy-content p { color: var(--color-gray); line-height: 1.7; margin-bottom: 14px; }
+
 /* ===== Quote calculator ===== */
 .quote-section { padding: 90px 0; background: var(--color-white); }
 .quote-card {
@@ -765,6 +770,20 @@ img { max-width: 100%; display: block; }
 .info-toggle.is-open .accordion-panel { padding: 10px 0 0; max-height: 300px; }
 .info-toggle .accordion-panel p { font-size: 0.85rem; }
 
+.quote-privacy-notice { display: flex; flex-direction: column; gap: 12px; }
+.quote-privacy-notice p { font-size: 0.8rem; color: var(--color-gray); line-height: 1.6; }
+.quote-privacy-notice p a { color: var(--color-green); text-decoration: underline; }
+.quote-consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--color-gray);
+  font-weight: 500;
+  cursor: pointer;
+}
+.quote-consent-checkbox input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--color-green); width: 16px; height: 16px; }
+
 .quote-submit { align-self: stretch; text-align: center; justify-content: center; }
 .quote-loading {
   display: flex;
@@ -778,12 +797,6 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 .quote-loading[hidden] { display: none; }
-.quote-loading-video {
-  width: 100%;
-  border-radius: var(--radius);
-  display: block;
-}
-.quote-loading-video[hidden] { display: none; }
 .spinner {
   width: 20px; height: 20px;
   border: 3px solid var(--color-gray-light);
@@ -792,6 +805,16 @@ img { max-width: 100%; display: block; }
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.quote-send-error {
+  background: rgba(178, 59, 59, 0.08);
+  border-left: 3px solid #b23b3b;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+.quote-send-error p { font-size: 0.85rem; color: #b23b3b; }
+.quote-send-error[hidden] { display: none; }
 
 .quote-results {
   margin-top: 40px;
@@ -803,110 +826,23 @@ img { max-width: 100%; display: block; }
 }
 .quote-results.is-visible { opacity: 1; transform: translateY(0); }
 
-.quote-statement-header { text-align: center; margin-bottom: 28px; }
-.quote-statement-eyebrow {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-gold-dark);
-  margin-bottom: 6px;
-}
-.quote-statement-header h2 { color: var(--color-green); margin-bottom: 6px; }
-.quote-statement-sub { font-size: 0.9rem; color: var(--color-gray); }
-
-.quote-cost-compare {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 16px;
-  background: var(--color-white);
-  border-radius: var(--radius);
-  padding: 24px 28px;
-  margin-bottom: 28px;
-  text-align: center;
-}
-.quote-cost-compare-item { display: flex; flex-direction: column; gap: 4px; }
-.quote-cost-label { font-size: 0.78rem; font-weight: 700; color: var(--color-gray); text-transform: uppercase; letter-spacing: 0.03em; }
-.quote-cost-number { font-family: var(--font-heading); font-weight: 800; font-size: clamp(1.4rem, 3.4vw, 1.9rem); color: var(--color-green); }
-.quote-cost-compare-item.is-solar .quote-cost-number { color: var(--color-gold-dark); }
-.quote-cost-unit { font-size: 0.75rem; color: var(--color-gray); }
-.quote-cost-vs { font-size: 0.8rem; font-weight: 700; color: var(--color-gray); }
-
-.quote-recommendation { margin-bottom: 24px; }
-.quote-scenario-card {
-  background: var(--color-white);
-  border-radius: var(--radius);
-  padding: 24px 28px;
-  border: 1.5px solid rgba(0, 0, 0, 0.06);
-}
-.quote-scenario-head {
+.quote-sent { text-align: center; }
+.quote-sent-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--color-green);
+  color: var(--color-white);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-.quote-scenario-badge {
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--color-white);
-  background: var(--color-green);
-  padding: 6px 14px;
-  border-radius: 999px;
-}
-.quote-scenario-size {
-  font-family: var(--font-heading);
+  justify-content: center;
+  font-size: 1.6rem;
   font-weight: 800;
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  color: var(--color-green);
 }
-.quote-scenario-facts { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.quote-scenario-facts li { font-size: 0.9rem; color: var(--color-gray); }
-.quote-scenario-facts li strong { color: var(--color-green); }
-.quote-scenario-was { font-size: 0.8rem; color: var(--color-gray); }
-.quote-scenario-projection {
-  background: rgba(0, 78, 46, 0.06);
-  border-radius: 10px;
-  padding: 14px 18px;
-}
-.quote-scenario-projection-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--color-gold-dark); margin-bottom: 4px; }
-.quote-scenario-projection-result { font-size: 0.88rem; color: var(--color-green-dark); }
-.quote-scenario-projection-result strong { color: var(--color-green); }
-
-.quote-chart { width: 100%; height: auto; display: block; margin: 8px 0 12px; overflow: visible; }
-.quote-chart text { font-family: var(--font-body); }
-.quote-chart-threshold { stroke: var(--color-gray); stroke-width: 1.5; stroke-dasharray: 4 4; }
-.quote-chart-threshold-label { fill: var(--color-gray); font-size: 9px; font-weight: 600; }
-.quote-chart-savings-line { fill: none; stroke: var(--color-green); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.quote-chart-dot { fill: var(--color-green); stroke: var(--color-white); stroke-width: 2; }
-.quote-chart-end-label { fill: var(--color-text); font-size: 10px; font-weight: 700; }
-.quote-chart-payback-dot { fill: var(--color-gold-dark); stroke: var(--color-green-dark); stroke-width: 2; }
-.quote-chart-payback-label { fill: var(--color-green-dark); font-size: 9px; font-weight: 700; }
-.quote-chart-axis-label { fill: var(--color-gray); font-size: 8px; }
-
-.quote-note {
-  background: rgba(255, 192, 0, 0.14);
-  border-left: 3px solid var(--color-gold);
-  padding: 14px 18px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-.quote-note p { font-size: 0.85rem; color: var(--color-green-dark); }
-
-.quote-assumptions {
-  background: var(--color-gray-light);
-  border-radius: var(--radius);
-  padding: 22px 26px;
-  margin-bottom: 20px;
-}
-.quote-assumptions-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--color-green); margin-bottom: 10px; }
-.quote-assumptions ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.quote-assumptions li { font-size: 0.85rem; color: var(--color-gray); padding-left: 16px; position: relative; }
-.quote-assumptions li::before { content: '—'; position: absolute; left: 0; color: var(--color-gray); }
+.quote-sent h2 { color: var(--color-green); margin-bottom: 10px; }
+.quote-sent p { color: var(--color-gray); margin-bottom: 8px; }
+.quote-sent #quoteSentEmail { color: var(--color-green); }
 
 .quote-disclaimer { font-size: 0.78rem; color: var(--color-gray); font-style: italic; margin-bottom: 24px; }
 .quote-results .btn { width: 100%; text-align: center; justify-content: center; }
@@ -980,8 +916,5 @@ img { max-width: 100%; display: block; }
   .accordion-item.is-open .accordion-panel { padding: 0 20px 20px; }
 
   .quote-card { padding: 28px 20px; }
-  .quote-cost-compare { grid-template-columns: 1fr; }
-  .quote-cost-vs { display: none; }
-  .quote-scenario-head { flex-direction: column; align-items: flex-start; gap: 8px; }
   .toggle-pair { flex-direction: column; }
 }

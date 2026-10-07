@@ -17,21 +17,14 @@
   const batteryRow = document.getElementById('batteryRow');
   const batteryToggle = document.getElementById('batteryToggle');
   const batteryInput = document.getElementById('batteryInput');
+  const dataConsentInput = document.getElementById('dataConsent');
+  const consentError = document.getElementById('consentError');
+  const marketingOptInInput = document.getElementById('marketingOptIn');
   const loadingEl = document.getElementById('quoteLoading');
+  const sendErrorEl = document.getElementById('quoteSendError');
   const resultsEl = document.getElementById('quoteResults');
-  const netMeteringNote = document.getElementById('netMeteringNote');
-  const statementNameEl = document.getElementById('quoteStatementName');
-  const statementKwhEl = document.getElementById('quoteStatementKwh');
-  const resultGridCost = document.getElementById('resultGridCost');
-  const resultSolarCost = document.getElementById('resultSolarCost');
-  const recommendationEl = document.getElementById('quoteRecommendation');
-  const assumptionsList = document.getElementById('quoteAssumptionsList');
+  const quoteSentEmail = document.getElementById('quoteSentEmail');
   const quoteCta = document.getElementById('quoteCta');
-  const loadingVideo = document.getElementById('quoteLoadingVideo');
-  const loadingSpinner = document.getElementById('quoteLoadingSpinner');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const PROJECTION_HORIZON_YEARS = 10;
 
   const PRODUCT_LABELS = {
     hybrid: 'Hybrid System — Battery Backup',
@@ -84,61 +77,6 @@
     return '₱' + num.toFixed(2);
   }
 
-  function animateValue(el, start, end, duration, formatter) {
-    const startTime = performance.now();
-    function tick(now) {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = start + (end - start) * eased;
-      el.textContent = formatter(current);
-      if (progress < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
-  // Isolated so a real loading animation (video/Lottie) can be swapped in later
-  // without touching the calculation/render logic below.
-  function playLoadingTransition(callback) {
-    formFieldsEl.hidden = true;
-    loadingEl.hidden = false;
-
-    let finished = false;
-    function finish() {
-      if (finished) return;
-      finished = true;
-      loadingEl.hidden = true;
-      callback();
-    }
-
-    const canPlayVideo = loadingVideo && !prefersReducedMotion;
-    if (!canPlayVideo) {
-      setTimeout(finish, prefersReducedMotion ? 300 : 1200);
-      return;
-    }
-
-    if (loadingSpinner) loadingSpinner.hidden = true;
-    loadingVideo.hidden = false;
-    loadingVideo.currentTime = 0;
-    loadingVideo.addEventListener('ended', finish, { once: true });
-    loadingVideo.addEventListener('error', () => {
-      loadingVideo.hidden = true;
-      if (loadingSpinner) loadingSpinner.hidden = false;
-      setTimeout(finish, 1200);
-    }, { once: true });
-
-    const playPromise = loadingVideo.play();
-    if (playPromise && playPromise.catch) {
-      playPromise.catch(() => {
-        loadingVideo.hidden = true;
-        if (loadingSpinner) loadingSpinner.hidden = false;
-        setTimeout(finish, 1200);
-      });
-    }
-
-    // Hard fallback in case 'ended' never fires (longer than the video's own length).
-    setTimeout(finish, 15000);
-  }
-
   // Picks the first tier whose kwh is >= the customer's usage (never undersizes);
   // clamps to the smallest/largest tier outside the reference sheet's 300-2000 kWh range.
   function findTier(monthlyKwh) {
@@ -186,120 +124,10 @@
     };
   }
 
-  function computeProjection(result) {
-    const cumulativeAtHorizon = result.annualSavings * PROJECTION_HORIZON_YEARS;
-    const remaining = Math.max(0, result.price - cumulativeAtHorizon);
-    const netBenefitAtHorizon = cumulativeAtHorizon - result.price;
-    const isPaidBackWithinHorizon = result.roiYears <= PROJECTION_HORIZON_YEARS;
-    const savingsByYear = Array.from({ length: PROJECTION_HORIZON_YEARS + 1 }, (_, year) => result.annualSavings * year);
-    return { cumulativeAtHorizon, remaining, netBenefitAtHorizon, isPaidBackWithinHorizon, savingsByYear };
-  }
-
-  // Small inline chart: cumulative savings (accent line) against the investment
-  // cost (a dashed gray threshold, direct-labeled — not a second "series").
-  function buildProjectionChart(result, projection) {
-    const W = 320, H = 150;
-    const padL = 8, padR = 8, padT = 16, padB = 26;
-    const plotW = W - padL - padR;
-    const plotH = H - padT - padB;
-    const horizon = PROJECTION_HORIZON_YEARS;
-    const maxY = Math.max(result.price, projection.savingsByYear[horizon], 1) * 1.15;
-
-    const x = (year) => padL + (year / horizon) * plotW;
-    const y = (value) => padT + plotH - (value / maxY) * plotH;
-
-    const thresholdY = y(result.price);
-    const linePoints = projection.savingsByYear.map((v, year) => `${x(year).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-
-    const endYear = horizon;
-    const endValue = projection.savingsByYear[endYear];
-    const endX = x(endYear);
-    const endY = y(endValue);
-    const endLabelY = endY < thresholdY ? endY - 10 : endY + 16;
-
-    let paybackMarkup = '';
-    if (projection.isPaidBackWithinHorizon) {
-      const py = result.roiYears;
-      const px = x(py);
-      const paybackAnchor = px < 50 ? 'start' : px > (W - 50) ? 'end' : 'middle';
-      paybackMarkup = `
-        <circle class="quote-chart-payback-dot" cx="${px.toFixed(1)}" cy="${thresholdY.toFixed(1)}" r="5"><title>Paid back in ${py.toFixed(1)} years</title></circle>
-        <text class="quote-chart-payback-label" x="${px.toFixed(1)}" y="${(thresholdY - 12).toFixed(1)}" text-anchor="${paybackAnchor}">Paid back ~${py.toFixed(1)}yr</text>
-      `;
-    }
-
-    // Every 2 years, not every year — 11 data points is too dense to label individually.
-    const axisYears = [];
-    for (let yr = 0; yr <= horizon; yr += 2) axisYears.push(yr);
-    const axisLabels = axisYears.map((yr) => {
-      const anchor = yr === 0 ? 'start' : yr === horizon ? 'end' : 'middle';
-      return `<text class="quote-chart-axis-label" x="${x(yr).toFixed(1)}" y="${H - 6}" text-anchor="${anchor}">Yr ${yr}</text>`;
-    }).join('');
-
-    return `
-      <svg class="quote-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${horizon}-year cumulative savings versus investment cost">
-        <line class="quote-chart-threshold" x1="${x(0).toFixed(1)}" y1="${thresholdY.toFixed(1)}" x2="${x(horizon).toFixed(1)}" y2="${thresholdY.toFixed(1)}" />
-        <text class="quote-chart-threshold-label" x="${x(0).toFixed(1)}" y="${(thresholdY - 6).toFixed(1)}">Investment: ${pesoFormat(result.price)}</text>
-        <polyline class="quote-chart-savings-line" points="${linePoints}" />
-        <circle class="quote-chart-dot" cx="${x(0).toFixed(1)}" cy="${y(0).toFixed(1)}" r="4" />
-        <circle class="quote-chart-dot" cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4"><title>Year ${horizon} cumulative savings: ${pesoFormat(endValue)}</title></circle>
-        <text class="quote-chart-end-label" x="${endX.toFixed(1)}" y="${endLabelY.toFixed(1)}" text-anchor="end">${pesoFormat(endValue)}</text>
-        ${paybackMarkup}
-        ${axisLabels}
-      </svg>
-    `;
-  }
-
-  function renderRecommendation(result, projection) {
-    const coveragePct = Math.round(result.coverage * 100);
-    const energyChargeLine = result.newMonthlyBill <= 0
-      ? '<strong>Energy charge covered in full</strong>'
-      : `Estimated energy charge: <strong>${pesoFormat(result.newMonthlyBill)}</strong> <span class="quote-scenario-was">(from ${pesoFormat(result.currentMonthlyBill)})</span>`;
-
-    const projectionLine = projection.isPaidBackWithinHorizon
-      ? `Paid back in <strong>~${result.roiYears.toFixed(1)} years</strong> — <strong>${pesoFormat(projection.netBenefitAtHorizon)}</strong> net benefit by year ${PROJECTION_HORIZON_YEARS}`
-      : `Not yet paid back within ${PROJECTION_HORIZON_YEARS} years — <strong>${pesoFormat(projection.remaining)}</strong> of installed cost remaining`;
-
-    const batteryLine = result.batteryKwh > 0
-      ? `<li>Includes a <strong>${result.batteryKwh.toFixed(1)} kWh</strong> battery bank for power during outages</li>`
-      : '';
-
-    const rangeNote = result.exceedsReferenceRange
-      ? '<p class="quote-scenario-was">Your usage is above our standard reference range — this uses our largest reference tier as a starting point; your final system will need a custom site assessment.</p>'
-      : '';
-
-    recommendationEl.innerHTML = `
-      <div class="quote-scenario-card">
-        <div class="quote-scenario-head">
-          <span class="quote-scenario-badge">${result.productLabel}</span>
-          <span class="quote-scenario-size" data-kwp="${result.pvKwp}">0 kWp</span>
-        </div>
-        <ul class="quote-scenario-facts">
-          <li>Covers approximately <strong>${coveragePct}%</strong> of your usage</li>
-          ${batteryLine}
-          <li>Estimated installed cost: <strong>${pesoFormat(result.price)}</strong></li>
-          <li>${energyChargeLine}</li>
-          <li>Monthly savings: <strong>${pesoFormat(result.monthlySavings)}</strong> &middot; Annual savings: <strong>${pesoFormat(result.annualSavings)}</strong></li>
-        </ul>
-        ${rangeNote}
-        <div class="quote-scenario-projection">
-          <p class="quote-scenario-projection-label">${PROJECTION_HORIZON_YEARS}-Year Projection</p>
-          ${buildProjectionChart(result, projection)}
-          <p class="quote-scenario-projection-result">${projectionLine}</p>
-        </div>
-      </div>
-    `;
-
-    const sizeEl = recommendationEl.querySelector('.quote-scenario-size');
-    animateValue(sizeEl, 0, result.pvKwp, 1200, (v) => v.toFixed(1) + ' kWp');
-  }
-
-  function buildAssumptions(result) {
-    const common = [
-      `Electricity at ${pesoRateFormat(pricing.electricity_rate_php_per_kwh)}/kWh, the Meralco residential rate for September 2026. Your rate will differ if another utility supplies you.`,
-      'Fixed charges stay on your bill whatever you generate.',
-      `Sized on ${pricing.peak_sun_hours} kWh per kWp per day (peak sun hours), a full-year average rather than a clear day.`,
-    ];
+  function buildAssumptionsList(result) {
+    const rateLine = `Electricity at ${pesoRateFormat(pricing.electricity_rate_php_per_kwh)}/kWh, the Meralco residential rate for September 2026. Your rate will differ if another utility supplies you.`;
+    const fixedChargesLine = 'Fixed charges stay on your bill whatever you generate.';
+    const yieldLine = `Sized on ${pricing.peak_sun_hours} kWh per kWp per day (peak sun hours), a full-year average rather than a clear day.`;
 
     let productSpecific;
     if (result.productKey === 'hybrid') {
@@ -310,33 +138,38 @@
       productSpecific = "This system is sized to what your home uses during the day, without exporting power back to the grid — typically covering around 40% of your total usage, with the rest still drawn from the grid as usual.";
     }
 
-    const items = [common[0], productSpecific, common[1], common[2]];
-    assumptionsList.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
+    return [rateLine, productSpecific, fixedChargesLine, yieldLine];
   }
 
-  function renderResults(result, projection, inputs) {
-    statementNameEl.textContent = inputs.name ? `Estimate for ${inputs.name}` : 'Your Estimate';
-    animateValue(statementKwhEl, 0, result.currentMonthlyKwh, 1200, (v) => Math.round(v).toLocaleString('en-US'));
+  function buildCoverageNote(result, inputs) {
+    const notes = [];
+    if (inputs.netMetering === 'yes') {
+      notes.push('Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking 2–4 months to complete.');
+    }
+    if (result.exceedsReferenceRange) {
+      notes.push('Your usage is above our standard reference range — this uses our largest reference tier as a starting point; your final system will need a custom site assessment.');
+    }
+    return notes.join(' ');
+  }
 
-    resultGridCost.textContent = pesoRateFormat(pricing.electricity_rate_php_per_kwh);
-    resultSolarCost.textContent = pesoRateFormat(settings.solar_cost_php_per_kwh);
-
-    renderRecommendation(result, projection);
-    buildAssumptions(result);
-
-    netMeteringNote.hidden = inputs.netMetering !== 'yes';
-
-    const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, net metering: ${inputs.netMetering}, battery backup: ${inputs.batteryBackup}. Recommended ${result.productLabel} (~${result.pvKwp.toFixed(1)}kWp), estimated cost ${pesoFormat(result.price)}, new monthly bill ~${pesoFormat(result.newMonthlyBill)}.`;
-    quoteCta.href = 'contact.html?prefill=' + encodeURIComponent(summary)
-      + '&name=' + encodeURIComponent(inputs.name)
-      + '&email=' + encodeURIComponent(inputs.email)
-      + '&phone=' + encodeURIComponent(inputs.phone);
-
-    resultsEl.hidden = false;
-    requestAnimationFrame(() => {
-      resultsEl.classList.add('is-visible');
-      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  function buildEmailPayload(result, inputs) {
+    return {
+      name: inputs.name,
+      email: inputs.email,
+      consent: inputs.dataConsent,
+      kwh: Math.round(result.currentMonthlyKwh).toLocaleString('en-US'),
+      gridCost: pesoRateFormat(pricing.electricity_rate_php_per_kwh),
+      solarCost: pesoRateFormat(settings.solar_cost_php_per_kwh),
+      productLabel: result.productLabel,
+      systemKwp: result.pvKwp.toFixed(1),
+      batteryKwh: result.batteryKwh > 0 ? result.batteryKwh.toFixed(1) : '',
+      price: pesoFormat(result.price),
+      monthlySavings: pesoFormat(result.monthlySavings),
+      annualSavings: pesoFormat(result.annualSavings),
+      roiYears: `~${result.roiYears.toFixed(1)} years`,
+      coverageNote: buildCoverageNote(result, inputs),
+      assumptions: buildAssumptionsList(result),
+    };
   }
 
   function submitLead(inputs) {
@@ -349,6 +182,8 @@
       kwh: inputs.kwh ? String(inputs.kwh) : '',
       'net-metering': inputs.netMetering,
       'battery-backup': inputs.batteryBackup,
+      'data-consent': inputs.dataConsent ? 'yes' : 'no',
+      'marketing-optin': inputs.marketingOptIn ? 'yes' : 'no',
     }).toString();
 
     fetch('/', {
@@ -358,6 +193,45 @@
     }).catch((err) => {
       console.error('Lead capture submission failed:', err);
     });
+  }
+
+  async function sendEstimateEmail(inputs) {
+    formFieldsEl.hidden = true;
+    sendErrorEl.hidden = true;
+    loadingEl.hidden = false;
+
+    const result = computeEstimate(inputs);
+    const payload = buildEmailPayload(result, inputs);
+
+    try {
+      const res = await fetch('/.netlify/functions/send-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('send-quote responded with status ' + res.status);
+
+      loadingEl.hidden = true;
+      quoteSentEmail.textContent = inputs.email;
+
+      const summary = `Solar estimate request: ~₱${Math.round(inputs.bill)}/mo bill, net metering: ${inputs.netMetering}, battery backup: ${inputs.batteryBackup}. Recommended ${result.productLabel} (~${result.pvKwp.toFixed(1)}kWp), estimated cost ${pesoFormat(result.price)}.`;
+      quoteCta.href = 'contact.html?prefill=' + encodeURIComponent(summary)
+        + '&name=' + encodeURIComponent(inputs.name)
+        + '&email=' + encodeURIComponent(inputs.email)
+        + '&phone=' + encodeURIComponent(inputs.phone);
+
+      resultsEl.hidden = false;
+      requestAnimationFrame(() => {
+        resultsEl.classList.add('is-visible');
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    } catch (err) {
+      console.error('Failed to send estimate email:', err);
+      loadingEl.hidden = true;
+      formFieldsEl.hidden = false;
+      sendErrorEl.hidden = false;
+    }
   }
 
   form.addEventListener('submit', (e) => {
@@ -387,6 +261,13 @@
       emailError.hidden = true;
     }
 
+    if (!dataConsentInput.checked) {
+      consentError.hidden = false;
+      firstInvalid = firstInvalid || dataConsentInput;
+    } else {
+      consentError.hidden = true;
+    }
+
     if (firstInvalid) {
       firstInvalid.focus();
       return;
@@ -407,15 +288,12 @@
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
         phone: phoneInput.value.trim(),
+        dataConsent: dataConsentInput.checked,
+        marketingOptIn: marketingOptInInput.checked,
       };
 
       submitLead(inputs);
-
-      playLoadingTransition(() => {
-        const result = computeEstimate(inputs);
-        const projection = computeProjection(result);
-        renderResults(result, projection, inputs);
-      });
+      sendEstimateEmail(inputs);
     }
   });
 

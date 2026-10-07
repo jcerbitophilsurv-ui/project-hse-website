@@ -173,3 +173,47 @@ Since each product now has a **fixed** coverage percentage (not a customer-adjus
 - `content/pricing-tables.yml` is not CMS-editable — updating it means hand-editing the YAML (or asking Claude) and re-verifying against the source spreadsheet, not a Decap CMS form. Worth a follow-up if Horizon wants to update pricing tiers without a developer.
 - Get Horizon's confirmation on the two data-quality flags above before treating live quotes as final.
 - The "above ₱2,000/2,000 kWh" edge case (customers larger than the reference sheet covers) clamps to the largest tier and shows an extra note that a custom site assessment is needed — reasonable, but genuinely large/commercial customers should probably be routed to a human quickly rather than shown a residential-tier estimate at all; worth revisiting once real usage data shows how often this triggers.
+
+## Phase 7 — Privacy Policy page + consent copy: built, NOT published (2026-09-10)
+
+**Status**: Built locally per Build Sheet tasks A2 and G9, all bracket placeholders now filled in per the user's direction. **Still deliberately not deployed** — held back at the user's explicit instruction this session (don't commit/push until told).
+
+**Done**:
+- New `privacy.html` — full 8-section Privacy Policy, copy transcribed from the Build Sheet's A2 task. `noindex, follow` meta tag; excluded from `sitemap.xml`; no OG/Twitter/`LocalBusiness` JSON-LD (matches the lighter-weight treatment already used for `thank-you.html`/`admin/index.html`, the site's other `noindex` utility pages).
+- "Privacy Policy" link added to the footer's Company column on all 6 main pages plus `privacy.html` itself (`index`, `about`, `services`, `faq`, `contact`, `quote`).
+- `quote.html`: added the G9 privacy notice + marketing-opt-in checkbox, placed after the battery-backup question and directly above the submit button. Checkbox is unticked by default, links to `privacy.html`. `quote-calculator.js` reads its state and includes `marketing-optin: yes/no` in the Netlify Forms lead-capture payload (`submitLead()`).
+- **All `[bracketed placeholders]` filled in**, per the user's explicit instruction:
+  - `[date of publication]` → September 10, 2026
+  - `[privacy@horizonsolar.net]` (both occurrences) → `sales@horizonsolar.net` (user's explicit override — same address the rest of the site already uses, not a separate privacy-specific inbox)
+  - `[registered office address]` → Mandaluyong City, Metro Manila (user's explicit override — a city/locality, not a full street address)
+  - The "who we share it with" list, retention period (24 months), and response SLA (15 working days) — unbracketed as-is, keeping the Build Sheet's own suggested values verbatim since no different values were given.
+
+**Still outstanding before this can go live**:
+- This is finalized *content*, but the Build Sheet's original instruction was explicit: confirm with Horizon's lawyer before publishing. Filling in the brackets at the user's direction is not the same as legal sign-off — flagging this distinction rather than assuming one implies the other.
+- `noindex` is still on `privacy.html` and it's still out of `sitemap.xml` — deliberately left as-is pending an explicit decision to make the page live/indexed, which is separate from the content being complete.
+- Confirm whether the marketing-opt-in checkbox's data (`marketing-optin` field in the `quote` Netlify Form) needs to actually feed an email list somewhere, or if it's just being recorded for now with no downstream automation yet.
+
+## Phase 8 — Quote calculator now emails the estimate instead of showing it (2026-10-07)
+
+**Status**: Built and verified locally (function tested end-to-end against the real Resend API with a placeholder key, which correctly returned a 401 — confirms the request shape is accepted). **Not deployed** — Resend account setup is still the user's to do (see checklist below), and nothing in this session has been committed/pushed per the standing instruction.
+
+**What changed, and why**: the client wants the calculator to require consent and email the estimate rather than display it, closing the loop with `privacy.html` (Phase 7). Specifically:
+- Added a required consent checkbox on `quote.html` — "I agree to share my personal data in line with the Privacy Policy" (`#dataConsent`, `required`, validated the same way as the Name/Email fields) — separate from the existing optional marketing opt-in checkbox from Phase 7.
+- Submit button relabeled "Show My Estimate" → "Send My Estimate".
+- The video loading transition (`playLoadingTransition()`, `assets/video/for-savings.mp4`) is removed — replaced with a plain "Sending your estimate…" spinner state, since there's now a real network round-trip (emailing) to wait on, not a fixed-length calculation.
+- The detailed on-page results panel (cost-compare bar, scenario card, 10-year projection chart, assumptions list) is removed entirely. In its place, a short confirmation: "Estimate sent! We've emailed your personalized solar estimate to [email]." with the same "Request a Formal Quote" / "Edit your answers" links as before.
+- **New: `netlify/functions/send-quote.js`** — the project's first (and so far only) server-side code. Plain Node, zero npm dependencies (uses the Node 18+ runtime's built-in `fetch`), so it needed no `package.json`/build step. Validates consent + a well-formed name/email, then calls the **Resend** API to send a branded HTML email with the computed estimate (recommended system, size, cost, savings, payback, grid-vs-solar cost, the same "how we worked this out" assumptions as before) to the customer's address, with `reply_to: sales@horizonsolar.net` so replies reach the inbox Horizon already monitors.
+- **New: `netlify.toml`** — just points Netlify at `netlify/functions/` for function discovery; doesn't touch the dashboard-configured build/publish settings.
+- `assets/js/quote-calculator.js`: kept `computeEstimate()`/`findTier()`/`pickProductKey()` unchanged (still the single source of truth for the numbers, still reading `content/pricing-tables.yml` — the email function does **not** duplicate this pricing logic, it only formats numbers it's handed). Removed `playLoadingTransition()`, `buildProjectionChart()`, `renderRecommendation()`, `renderResults()`, `computeProjection()`, and `animateValue()` (all were on-page-rendering-only, now dead). Added `buildAssumptionsList()` (same assumptions text, now returned as an array instead of written to the DOM), `buildCoverageNote()`, `buildEmailPayload()`, and `sendEstimateEmail()` (POSTs to `/.netlify/functions/send-quote`, handles the loading/success/error states). `submitLead()` (the existing internal Netlify Forms lead notification to Horizon) is unchanged and still fires independently of the email send — so Horizon still gets notified of every calculator submission even if, say, Resend is temporarily down.
+- `assets/css/styles.css`: removed the now-dead `.quote-loading-video`, `.quote-statement-*`, `.quote-cost-compare*`, `.quote-recommendation`/`.quote-scenario-*`, `.quote-chart*`, `.quote-note`, `.quote-assumptions*` rules (and their responsive overrides). Added `.quote-send-error` (inline failure state) and `.quote-sent`/`.quote-sent-icon` (the new confirmation panel).
+
+**Deliberate design choices worth flagging**:
+- The email function trusts the client-computed numbers rather than recomputing the estimate server-side from `content/pricing-tables.yml`. This avoids maintaining the pricing lookup logic in two places (and two languages worth of sync risk), which is reasonable for a non-financial, informational estimate email — but means a malicious client could POST fabricated numbers to the function directly (not through the UI). Low stakes (no money moves, no account access), but worth knowing if this function is ever extended to do something higher-stakes.
+- Sends from `quotes@horizonsolar.net`, not `sales@horizonsolar.net` — a dedicated address for automated mail keeps `sales@`'s domain reputation separate from bulk/transactional sending, while `reply_to` still routes any reply to `sales@`. This needs `quotes@horizonsolar.net` to exist as at least a valid send-from address once the domain is verified in Resend (doesn't need its own inbox unless Horizon wants one).
+- `assets/video/for-savings.mp4` is no longer referenced by any page — left on disk rather than deleted, in case a future loading state wants it (see Phase 3 for its provenance/watermark-verification history).
+
+**Outstanding — setup required outside this repo before this goes live**:
+1. Create a Resend account, add `horizonsolar.net`, and add the DNS records Resend provides (SPF/DKIM) at the domain registrar — needed for `quotes@horizonsolar.net` to send without landing in spam or being rejected outright. DNS propagation can take anywhere from minutes to ~48 hours.
+2. Create a Resend API key and add it to Netlify as the `RESEND_API_KEY` environment variable (Site configuration → Environment variables), then redeploy so the function picks it up.
+3. Submit the live form once deployed and confirm: the email actually arrives (check spam too), the Netlify Forms internal lead notification still arrives separately, and the "Request a Formal Quote" / "Edit your answers" links on the confirmation screen work.
+4. Decide whether `quotes@horizonsolar.net` should also exist as a real monitored inbox, or stay send-only.

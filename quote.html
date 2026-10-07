@@ -84,7 +84,7 @@
     <div class="container">
       <p class="eyebrow reveal">See What It Costs</p>
       <h1 class="reveal">What would solar actually cost on your roof?</h1>
-      <p class="reveal">Enter last month's electricity bill and we will show you the system size that fits, what it costs, and roughly what you would save. It is an estimate — the real number comes after we have seen your roof.</p>
+      <p class="reveal">Enter last month's electricity bill and we'll email you the system size that fits, what it costs, and roughly what you would save. It is an estimate — the real number comes after we have seen your roof.</p>
     </div>
   </section>
 
@@ -158,49 +158,37 @@
               <p class="field-hint">Solar alone won't power your home during a brownout — a battery will.</p>
             </div>
 
-            <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Show My Estimate</button>
+            <div class="quote-privacy-notice">
+              <p>We'll email your estimate to the address above, and use your details to reply about it. We do not sell them, and we do not share them with anyone outside the people working on your project. You can ask us to delete them at any time. See our <a href="privacy.html">Privacy Policy</a>.</p>
+              <label class="quote-consent-checkbox">
+                <input type="checkbox" id="dataConsent" name="data-consent" required>
+                I agree to share my personal data in line with the <a href="privacy.html">Privacy Policy</a>.
+              </label>
+              <p class="field-error" id="consentError" hidden>Please confirm you agree to share your personal data so we can send your estimate.</p>
+              <label class="quote-consent-checkbox">
+                <input type="checkbox" id="marketingOptIn" name="marketing-optin">
+                Send me occasional updates about solar in the Philippines. <span class="field-optional">(Optional — you can stop these at any time.)</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-gold quote-submit" id="quoteSubmit">Send My Estimate</button>
           </div>
 
           <div class="quote-loading" id="quoteLoading" hidden>
-            <video id="quoteLoadingVideo" class="quote-loading-video" src="assets/video/for-savings.mp4" muted playsinline hidden></video>
-            <span class="spinner quote-loading-fallback-spinner" id="quoteLoadingSpinner" hidden></span>
-            <span>Calculating your estimate…</span>
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Sending your estimate…</span>
+          </div>
+
+          <div class="quote-send-error" id="quoteSendError" hidden>
+            <p>Something went wrong sending your estimate. Please try again, or <a href="contact.html">contact us directly</a>.</p>
           </div>
         </form>
 
-        <div class="quote-results" id="quoteResults" hidden>
-          <div class="quote-statement-header">
-            <p class="quote-statement-eyebrow">Your Energy Statement</p>
-            <h2 id="quoteStatementName">Your Estimate</h2>
-            <p class="quote-statement-sub">Based on an estimated monthly usage of <span id="quoteStatementKwh">0</span> kWh</p>
-          </div>
-
-          <div class="quote-cost-compare">
-            <div class="quote-cost-compare-item">
-              <span class="quote-cost-label">Grid Electricity Cost</span>
-              <span class="quote-cost-number" id="resultGridCost">₱0.00</span>
-              <span class="quote-cost-unit">per kWh</span>
-            </div>
-            <div class="quote-cost-vs">vs</div>
-            <div class="quote-cost-compare-item is-solar">
-              <span class="quote-cost-label">Solar Cost</span>
-              <span class="quote-cost-number" id="resultSolarCost">₱0.00</span>
-              <span class="quote-cost-unit">per kWh</span>
-            </div>
-          </div>
-
-          <div class="quote-recommendation" id="quoteRecommendation"></div>
-
-          <div class="quote-note" id="netMeteringNote" hidden>
-            <p>Since net metering is required, this estimate assumes a grid-tied system with a formal utility application (facility inspection + bi-directional meter), typically taking <strong>2–4 months</strong> to complete.</p>
-          </div>
-
-          <div class="quote-assumptions">
-            <p class="quote-assumptions-label">How we worked this out</p>
-            <ul id="quoteAssumptionsList"></ul>
-          </div>
-
-          <p class="quote-disclaimer">This is a ballpark estimate based on typical Philippine market pricing and average solar yield. Your final quote will depend on a free assessment of your roof, shading, and electrical setup.</p>
+        <div class="quote-results quote-sent" id="quoteResults" hidden>
+          <div class="quote-sent-icon" aria-hidden="true">&#10003;</div>
+          <h2>Estimate sent!</h2>
+          <p>We've emailed your personalized solar estimate to <strong id="quoteSentEmail"></strong>.</p>
+          <p class="quote-disclaimer">Didn't get it in a few minutes? Check spam, or <a href="contact.html">contact us directly</a>.</p>
 
           <a href="contact.html" class="btn btn-gold" id="quoteCta">Request a Formal Quote</a>
           <button type="button" class="quote-edit-link" id="quoteEditAnswers">Edit your answers</button>
@@ -226,6 +214,7 @@
         <li><a href="services.html">Services</a></li>
         <li><a href="faq.html">How It Works</a></li>
         <li><a href="contact.html">Contact</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
       </ul>
     </div>
     <div class="footer-col">

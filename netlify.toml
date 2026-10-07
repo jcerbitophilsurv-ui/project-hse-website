@@ -1,0 +1,5 @@
+# Site build/publish settings stay as configured in the Netlify dashboard
+# (this project has no build step — see CLAUDE.md). This file only adds the
+# functions directory so Netlify picks up netlify/functions/send-quote.js.
+[functions]
+  directory = "netlify/functions"
