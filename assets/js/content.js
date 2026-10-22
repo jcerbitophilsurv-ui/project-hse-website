@@ -116,7 +116,7 @@
       const jobs = (data && data.jobs) || [];
       list.innerHTML = jobs.length
         ? jobs.map(jobCardHTML).join('')
-        : '<p class="content-empty">There are no open roles right now. We\'re always glad to hear from people who want to work in solar — send your CV to <a href="mailto:sales@horizonsolar.net">sales@horizonsolar.net</a> and we\'ll keep it on file.</p>';
+        : '<p class="content-empty">There are no open roles right now. We\'re always glad to hear from people who want to work in solar — send your CV to <a href="mailto:recruitment@horizonsolar.net">recruitment@horizonsolar.net</a> and we\'ll keep it on file.</p>';
     } catch (err) {
       list.innerHTML = '<p class="content-empty">Unable to load open roles right now. Please try again shortly.</p>';
       console.error(err);
